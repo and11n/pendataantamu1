@@ -3,7 +3,14 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Ekspedisi;
+use App\Models\KedatanganEkspedisi;
+use App\Models\KedatanganTamu;
+use App\Models\Pegawai;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +19,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // $data = Pegawai::all();
+        // foreach ($data as $row) {
+        //     $row->password = Hash::make('password');
+        //     $row->save();
+        // }
+        $this->call(
+            UserSeeder::class,
+        );
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

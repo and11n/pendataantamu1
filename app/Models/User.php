@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nama_user',
         'email',
         'password',
     ];
@@ -41,4 +41,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function pegawai()
+    {
+        return $this->hasOne(Pegawai::class, 'id_user');
+    }
+
 }

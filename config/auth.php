@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'pegawai' => [
+            'driver' => 'session',
+            'provider' => 'pegawais'
+        ]
     ],
 
     /*
@@ -64,6 +68,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        'pegawais' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Pegawai::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
@@ -93,6 +101,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'pegawais' => [
+            'provider' => 'pegawais',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

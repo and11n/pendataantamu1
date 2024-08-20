@@ -23,6 +23,52 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin/index');
+        return view('home');
+    }
+
+    public function kunjungan()
+    {
+        return view('admin.kunjungan');
+    }
+    public function pegawaiKunjungan()
+    {
+        return view('pegawai.kunjungan');
+    }
+
+    public function kunjunganSearch()
+    {
+        return view('admin.kunjungan');
+    }
+
+    public function laporan()
+    {
+        return view('admin.laporan');
+    }
+    public function pegawaiLaporan()
+    {
+        return view('pegawai.laporan');
+    }
+
+    public function laporanSearchTamu()
+    {
+        return view('admin.laporan');
+    }
+
+    public function laporanKurir()
+    {
+        return view('admin.laporanKurir');
+    }
+    public function pegawaiLaporanKurir()
+    {
+        return view('pegawai.laporanKurir');
+    }
+
+    public function laporanSearchKurir()
+    {
+        return view('admin.laporanKurir');
+    }
+    public function pegawaiLaporanSearchKurir()
+    {
+        return view('pegawai.laporanKurir');
     }
 }
