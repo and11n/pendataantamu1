@@ -24,7 +24,7 @@
                 <select required class="form-select" name="ptk" aria-label="PTK">
                     <option selected disabled>Pilih</option>
                     <option value="produktif rpl">Produktif RPL</option>
-                    <option value="matematika">matematika</option>
+                    <option value="matematika">Matematika</option>
                     <option value="produktif akl">Produktif AKL</option>
                     <option value="inggris">Inggris</option>
                 </select>
@@ -54,23 +54,21 @@
             <h5>Data Pegawai</h5>
             <div class="d-flex w-50 gap-3">
                 <select onchange="search()" class="form-select" style="width: 20rem" name="body_ptk" id="body_ptk">
-                    <option selected value>Pilih</option>
-                    <option value="produktif rpl">Produktif RPL</option>
-                    <option value="matematika">matematika</option>
-                    <option value="produktif akl">Produktif AKL</option>
+                    <option selected value>PTK</option>
+                    <option value="produktif_rpl">Produktif RPL</option>
+                    <option value="matematika">Matematika</option>
+                    <option value="produktif_akl">Produktif AKL</option>
                     <option value="inggris">Inggris</option>
                 </select>
                 <div style="background-color: #F5F7FA;width:60rem"
-                    class="rounded-pill d-flex gap-1 justify-content-center align-items-center p-1 px-3">
+                     class="rounded-pill d-flex gap-1 justify-content-center align-items-center p-1 px-3">
                     <label for="search">
                         <img height="20" width="20" src="{{ asset('img/magnifying-glass 1.png') }}" alt="search">
                     </label>
-                    <input oninput="search()" placeholder="Search" style="border: none;background-color: #F5F7FA;"
-                        class="form-control rounded-pill" type="text" name="search" id="search_2">
+                    <input oninput="search()" placeholder="Search"
+                           style="border: none;background-color: #F5F7FA;"
+                           class="form-control rounded-pill" type="text" name="search" id="search_2">
                 </div>
-
-                {{-- <button class="btn btn-primary" style="width: 20rem">Import <span><img
-                            src="{{ asset('img/import.png') }}" alt="im"></span></button> --}}
             </div>
         </div>
         <div class="container">
@@ -99,7 +97,7 @@
                         <th>PTK</th>
                         <th>NIP</th>
                         <th>Email</th>
-                        <th>Action</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -116,80 +114,61 @@
                             <td>{{ $dat->user->email }}</td>
                             <td class="d-flex gap-5">
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn" data-bs-toggle="modal"
-                                    data-bs-target="#editModal{{ $dat->id_user }}">
+                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editModal{{ $dat->id_user }}">
                                     <img src="{{ asset('img/edit.png') }}" alt="edit">
                                 </button>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="editModal{{ $dat->id_user }}" tabindex="-1"
-                                    aria-labelledby="editModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="editModal{{ $dat->id_user }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h1 class="modal-title fs-5" id="editModalLabel">Edit Pegawai</h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form action="{{ route('editPegawaiAdmin', ['id' => $dat->id_user]) }}" method="post">
+                                            <form action="{{ route('editPegawaiAdmin', ['id' => $dat->id_user]) }}" method="POST">
                                                 <div class="modal-body d-flex gap-2">
                                                     @csrf
-                                                    @method('GET')
-                                                    <input type="hidden" name="id" value="{{ $dat->id }}">
+                                                    <input type="hidden" name="id" value="{{ $dat->id_user }}">
                                                     <div class="w-50 d-flex flex-column gap-4">
                                                         <div class="form-group">
-                                                            <label for="nama">Nama</label>
-                                                            <input required value="{{ $dat->nama }}" type="text"
-                                                                class="form-control"
-                                                                id="{{ $dat->id . 'nama' }}" name="nama"
-                                                                placeholder="Masukkan Nama">
+                                                            <label for="nama_user">Nama</label>
+                                                            <input required value="{{ $dat->user->nama_user }}" type="text" class="form-control" id="nama_user{{ $dat->id_user }}" name="nama_user" placeholder="Masukkan Nama">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="email">Email</label>
-                                                            <input value="{{ $dat->email }}" required type="email"
-                                                                class="form-control"
-                                                                id="{{ $dat->id . 'email' }}" name="email"
-                                                                placeholder="Masukkan Email">
+                                                            <input value="{{ $dat->user->email }}" required type="email" class="form-control" id="email{{ $dat->id_user }}" name="email" placeholder="Masukkan Email">
                                                         </div>
                                                         <div>
                                                             <label for="ptk">PTK</label>
-                                                            <select required class="form-select" name="ptk"
-                                                                aria-label="PTK">
-                                                                <option {{ $dat->ptk == 'guru' ? 'selected' : '' }}
-                                                                    value="guru">Guru</option>
-                                                                <option {{ $dat->ptk == 'tendik' ? 'selected' : '' }}
-                                                                    value="tendik">Tendik</option>
+                                                            <select required class="form-select" name="ptk" aria-label="ptk">
+                                                                <option {{ $dat->ptk == 'produktif_rpl' ? 'selected' : '' }} value="produktif_rpl">Produktif RPL</option>
+                                                                <option {{ $dat->ptk == 'matematika' ? 'selected' : '' }} value="matematika">Matematika</option>
+                                                                <option {{ $dat->ptk == 'produktif_akl' ? 'selected' : '' }} value="produktif_akl">Produktif AKL</option>
+                                                                <option {{ $dat->ptk == 'inggris' ? 'selected' : '' }} value="inggris">Inggris</option>
                                                             </select>
                                                         </div>
                                                     </div>
                                                     <div class="w-50 d-flex flex-column gap-4">
                                                         <div class="form-group">
                                                             <label for="no_telp">No Telp</label>
-                                                            <input value="{{ $dat->no_telp }}" required type="text"
-                                                                inputmode="numeric" class="form-control"
-                                                                id="{{ $dat->id . 'no_telp' }}"
-                                                                name="no_telp"
-                                                                placeholder="Masukkan No HP">
+                                                            <input value="{{ $dat->no_telp }}" required type="text" inputmode="numeric" class="form-control" id="no_telp{{ $dat->id_user }}" name="no_telp" placeholder="Masukkan No HP">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="NIP">NIP</label>
-                                                            <input value="{{ $dat->NIP }}" required type="number"
-                                                                inputmode="numeric" class="form-control"
-                                                                id="{{ $dat->id . 'NIP' }}"
-                                                                name="NIP"
-                                                                placeholder="Masukkan NIP">
+                                                            <label for="nip">NIP</label>
+                                                            <input value="{{ $dat->nip }}" required type="number" inputmode="numeric" class="form-control" id="nip{{ $dat->id_user }}" name="nip" placeholder="Masukkan NIP">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
+
                                 <a onclick="return confirm('Yakin ingin hapus?')">
                                     <form action="{{ route('deletePegawaiAdmin', ['id' => $dat->id_user]) }}" method="POST">
                                         @csrf
@@ -213,3 +192,40 @@
 @section('script')
     <script src="{{ asset('js/pegawai.js') }}"></script>
 @endsection
+
+@push('myscript')
+<script>
+document.getElementById('searchInput').addEventListener('input', function() {
+    filterTable();
+});
+
+document.getElementById('body_ptk').addEventListener('change', function() {
+    filterTable();
+});
+
+function filterTable() {
+    var input, filter, table, tr, td, i, j, txtValue;
+    var selectFilter = document.getElementById('body_ptk').value.toLowerCase();
+    input = document.getElementById('searchInput');
+    filter = input.value.toLowerCase();
+    table = document.querySelector('tbody');
+    tr = table.getElementsByTagName('tr');
+
+    for (i = 0; i < tr.length; i++) {
+        tr[i].style.display = 'none';
+        td = tr[i].getElementsByTagName('td');
+        for (j = 0; j < td.length; j++) {
+            if (td[j]) {
+                txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toLowerCase().includes(filter) &&
+                    (selectFilter === "" || td[3].textContent.toLowerCase().includes(selectFilter))) {
+                    tr[i].style.display = '';
+                    break;
+                }
+            }
+        }
+    }
+}
+
+</script>
+@endpush

@@ -4,13 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\Models\KedatanganTamu;
+use App\Models\KedatanganEkspedisi;
+use App\Models\Pegawai;
+
+
 
 class PegawaiLoginController extends Controller
 {
     public function index()
     {
-        return view('pegawai.dashboard');
+        // Menghitung jumlah tamu hari ini
+        $countTamuHari = KedatanganTamu::whereDate('created_at', Carbon::today())->count();
+
+        // Menghitung jumlah kurir hari ini (jika diperlukan)
+        $countKurirHari = KedatanganEkspedisi::whereDate('created_at', Carbon::today())->count();
+
+        $countGuru = Pegawai::count();
+        // dd($countGuru);
+
+        // $countTendik = Pegawai::count();
+
+        // Kirim variabel ke view
+        return view('pegawai.dashboard', compact('countTamuHari', 'countKurirHari', 'countGuru'));
     }
+
     public function loginPage()
     {
         if (Auth::guard('pegawai')->check()) {

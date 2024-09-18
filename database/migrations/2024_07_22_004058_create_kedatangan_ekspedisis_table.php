@@ -12,13 +12,12 @@ return new class extends Migration {
     {
         Schema::create('kedatangan_ekspedisis', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kurir');
+            // $table->string('nama_kurir');
             $table->string('id_ekspedisi');
             $table->string('id_pegawai');
-            $table->unsignedBigInteger('id_user');
-            $table->text('foto')->nullable();
+            $table->unsignedBigInteger('id_user')->nullable();
+            $table->text('foto');
             $table->dateTime('tanggal_waktu');
-
             $table->foreign('id_user')->references('id')->on('users');
             $table->foreign('id_ekspedisi')->references('id_ekspedisi')->on('ekspedisis');
             $table->foreign('id_pegawai')->references('nip')->on('pegawais');
