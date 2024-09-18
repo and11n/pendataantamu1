@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class KedatanganEkspedisi extends Model
 {
-    protected $fillable = ['nama_kurir', 'id_ekspedisi', 'id_pegawai', 'id_user', 'foto'];
+    protected $table='kedatangan_ekspedisis';
+
+    protected $fillable = ['id_ekspedisi', 'id_pegawai', 'id_user', 'foto', 'tanggal_waktu'];
     public function ekspedisi(): BelongsTo
     {
         return $this->belongsTo(Ekspedisi::class, 'id_ekspedisi');

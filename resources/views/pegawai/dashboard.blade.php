@@ -14,18 +14,7 @@
             <div style="width: 100%" class="d-flex flex-column align-items-center">
                 <div>
                     <p style="color:#718EBF">Hari Ini</p>
-                    {{-- <h4>{{ $countTamuHari }} Tamu</h4> --}}
-                </div>
-            </div>
-        </div>
-        <div class="d-flex mycard bg-white shadow p-3 px-4">
-            <div class="align-self-start">
-                <img src="{{ asset('img/Group 400.png') }}" alt="">
-            </div>
-            <div style="width: 100%" class="d-flex flex-column align-items-center">
-                <div>
-                    <p style="color:#718EBF">Bulan Ini</p>
-                    {{-- <h4>{{ $countTamuBulan }} Tamu</h4> --}}
+                    <h4>{{ $countTamuHari }} Tamu</h4>
                 </div>
             </div>
         </div>
@@ -36,7 +25,18 @@
             <div style="width: 100%" class="d-flex flex-column align-items-center">
                 <div>
                     <p style="color:#718EBF">Hari Ini</p>
-                    {{-- <h4>{{ $countKurirHari }} Kurir</h4> --}}
+                    <h4>{{ $countKurirHari }} Kurir</h4>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex mycard bg-white shadow p-3 px-4">
+            <div class="align-self-start">
+                <img src="{{ asset('img/Group 400.png') }}" alt="">
+            </div>
+            <div style="width: 100%" class="d-flex flex-column align-items-center">
+                <div>
+                    <p style="color:#718EBF">Total Guru</p>
+                    <h4>{{ $countGuru }}</h4>
                 </div>
             </div>
         </div>
@@ -46,8 +46,8 @@
             </div>
             <div style="width: 100%" class="d-flex flex-column align-items-center">
                 <div>
-                    <p style="color:#718EBF">Bulan Ini</p>
-                    {{-- <h4>{{ $countKurirBulan }} Kurir</h4> --}}
+                    <p style="color:#718EBF">Total Tendik</p>
+                    {{-- <h4>{{ $countTendik}} </h4> --}}
                 </div>
             </div>
         </div>

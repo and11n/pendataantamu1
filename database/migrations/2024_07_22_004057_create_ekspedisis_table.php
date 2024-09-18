@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('ekspedisis', function (Blueprint $table) {
             $table->string('id_ekspedisi')->primary();
-            $table->string('nama_kurir');
+            $table->string('nama_kurir')->default('Unknown');
             $table->string('ekspedisi');
             $table->string('no_telp');
             $table->timestamps();

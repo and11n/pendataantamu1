@@ -30,14 +30,15 @@ class LoginController extends Controller
         $role = auth()->user()->role;
 
         if ($role == 'admin') {
-            return 'admin';
+            return route('admin.dashboard');
         } elseif ($role == 'pegawai') {
-            return 'pegawai';
+            return route('pegawai.dashboard');
         } elseif ($role == 'fo') {
-            return 'fo';
+            return route('frontoffice.dashboard');
         } else {
-            return '/';
+            return '/beranda'; // URL default jika role tidak cocok
         }
+
     }
 
     /**

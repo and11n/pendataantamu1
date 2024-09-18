@@ -14,6 +14,12 @@
                         </div>
                     @endif
 
+                    @if (Auth::user()->role == "pegawai")
+                    <h1>skdsjdj</h1>
+                @elseif (Auth::user()->role == "admin")
+                    <h1>admin</h1>
+                @endif
+
                     {{ __('You are logged in!') }}
                 </div>
             </div>

@@ -18,7 +18,8 @@ class PegawaiController extends Controller
     public function index()
     {
         $wali = Pegawai::with('user');
-        $data = Pegawai::paginate(10);
+        $data = Pegawai::with('user')->paginate(10);
+        // dd($data);
         return view('admin/pgww', compact('data', 'wali'));
     }
 
@@ -35,7 +36,6 @@ class PegawaiController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'nama_user' => 'required',
             'email' => 'required',
@@ -44,6 +44,7 @@ class PegawaiController extends Controller
             'nip' => 'required|unique:pegawais,nip',
             'password' => 'required',
         ]);
+        // dd($request->all());
 
         // dd($request->all());
         $user = User::create([
@@ -79,20 +80,41 @@ class PegawaiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request)
+    public function edit($id, Request $request)
     {
-        DB::table('pegawais')->where('id', $request->id)->update([
+        // Validasi input
+        // $request->validate([
+            //     'nama_user' => 'required',
+            //     'email' => 'required|email',
+            //     'ptk' => 'required',
+            //     'no_telp' => 'required',
+            //     'nip' => 'required|unique:pegawais,nip', // Menambahkan pengecekan unique, kecuali untuk pegawai yang sedang diedit
+            //     'password' => 'nullable', // Password bisa diisi atau tidak (optional)
+            // ]);
 
-            'nama' => $request->nama,
-            'NIP' => $request->NIP,
-            'no_telp' => $request->no_telp,
-            'ptk' => $request->ptk,
-            'email' => $request->email,
-            // save();
-            // dd($newPgw);
-        ]);
-        return redirect()->back();
+
+            // Ambil data user berdasarkan ID
+            $user = User::findOrFail($id);
+
+            // Update data user
+            $user->update([
+                'nama_user' => $request->nama_user,
+                'email' => $request->email,
+                'password' => $request->password ? Hash::make($request->password) : $user->password,
+            ]);
+
+
+            // Update data pegawai
+            Pegawai::where('id_user', $user->id)->update([
+                'nip' => $request->nip,
+                'ptk' => $request->ptk,
+                'no_telp' => $request->no_telp,
+            ]);
+
+        // Redirect atau lakukan sesuatu setelah berhasil update
+        return redirect()->route('admin.pegawai');
     }
+
     public function pegawaiSearch(Request $request)
     {
         $searchTerm = $request->search != null ? $request->search : "";
@@ -125,6 +147,9 @@ class PegawaiController extends Controller
     {
         $pegawai = Pegawai::where('id_user', $request->id);
         $pegawai->delete();
+
+        $user = User::where('id', $request->id);
+        $user->delete();
         return redirect()->back();
     }
 

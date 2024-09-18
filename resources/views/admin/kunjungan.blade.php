@@ -19,7 +19,7 @@
                                 <img style="height: fit-content" src="{{ asset('img/belum datang.png') }}" alt="belum datang">
                             </div>
                             <div>
-                                {{-- <div>{{ $tamuBelumDatang }} orang</div> --}}
+                                <div>{{ $tamuBelumDatang }} orang</div>
                                 <h6>Belum Datang</h6>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                                 <img style="height: fit-content" src="{{ asset('img/selesai.png') }}" alt="belum datang">
                             </div>
                             <div>
-                                {{-- <div>{{ $tamuSelesai }} orang</div> --}}
+                                <div>{{ $tamuSelesai }} orang</div>
                                 <h6>Selesai</h6>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                                     alt="belum datang">
                             </div>
                             <div>
-                                {{-- <div>{{ $tamuGagal }} orang</div> --}}
+                                <div>{{ $tamuGagal }} orang</div>
                                 <h6>Tidak Hadir</h6>
                             </div>
                         </div>

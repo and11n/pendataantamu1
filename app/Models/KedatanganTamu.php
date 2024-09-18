@@ -8,10 +8,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class KedatanganTamu extends Model
 {
+    protected $table = 'kedatangan_tamus';
+
+    protected $fillable = [
+        'instansi',
+        'id_pegawai',
+        'id_tamu',
+        'foto',
+        'tujuan',
+        'qr_code',
+        'waktu_perjanjian',
+        'waktu_kedatangan',
+        'status'
+    ];
+
+    // Relasi ke model Pegawai
     public function pegawai(): BelongsTo
     {
-        return $this->belongsTo(Pegawai::class, "id_pegawai");
+        return $this->belongsTo(Pegawai::class, 'id_pegawai');
     }
-    protected $fillable = ['nama', 'instansi', 'alamat', 'id_pegawai', 'id_user', 'foto', 'no_telp', 'email', 'tujuan', 'qr_code', 'waktu_perjanjian', 'waktu_kedatangan', 'status', 'keterangan'];
+
+    // Relasi ke model Tamu
+    public function tamu(): BelongsTo
+    {
+        return $this->belongsTo(Tamu::class, 'id_tamu'); // Pastikan id_tamu adalah foreign key
+    }
+
     use HasFactory;
 }

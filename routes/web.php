@@ -7,10 +7,11 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PegawaiLoginController;
 use App\Http\Controllers\FrontOfficeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/login', function () {
+// Route::get('/', function () {
 //     if (auth()->check()) {
 //         $role = auth()->user()->role;
 
@@ -19,17 +20,17 @@ use Illuminate\Support\Facades\Route;
 //         } elseif ($role == 'pegawai') {
 //             return redirect('pegawai');
 //         } elseif ($role == 'fo') {
-//             return redirect('FrontOffice');
+//             return redirect('fo');
 //         } else {
-//             return redirect('/welcome');
+//             return redirect('/beranda');
 //         }
 //     }
-//     // return view('login');
+//     return view('signin');
 // });
 
 
 Route::get('/dashboard', [AdminController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/', [AdminController::class, 'loginui'])->name('loginui');
+Route::get('/loginui', [AdminController::class, 'loginui'])->name('loginui');
 
 Route::middleware(['auth', 'CheckRole:admin'])->prefix('admin')->group(function (){
     Route::get('/', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -55,7 +56,7 @@ Route::middleware(['auth', 'CheckRole:admin'])->prefix('admin')->group(function 
     Route::delete('/pegawai/hapus/{id}', [PegawaiController::class, 'destroy'])->name('deletePegawaiAdmin');
     Route::post('/pegawai', [PegawaiController::class, 'store'])->name('addPegawaiAdmin');
     Route::post('/pegawai/search', [PegawaiController::class, 'pegawaiSearch'])->name('searchPegawaiAdmin');
-    Route::get('/pegawai/{id}', [PegawaiController::class, 'edit'])->name('editPegawaiAdmin');
+    Route::post('/pegawai/{id}', [PegawaiController::class, 'edit'])->name('editPegawaiAdmin');
     Route::get('import-excel', [PegawaiController::class, 'import_excel']);
     Route::post('import-excel', [PegawaiController::class, 'import_excel_post'])->name('admin_import-excel');
 });
@@ -67,8 +68,7 @@ Route::middleware(['auth', 'CheckRole:admin'])->prefix('admin')->group(function 
     // });
 
 Route::middleware('CheckRole:pegawai')->prefix('pegawai')->group(function () {
-    Route::get('/', [PegawaiLoginController::class, 'index'])->name('pegawai.dashboard');
-
+    Route::get('/pegawai-dashboard', [PegawaiLoginController::class, 'index'])->name('pegawai.dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -85,6 +85,7 @@ Route::middleware('CheckRole:pegawai')->prefix('pegawai')->group(function () {
     Route::get('/tamu/kedatangan/{id}', [KedatanganTamuController::class, 'kedatangan'])->name('tambahKedatanganTamu');
     Route::get('/tamu/gagal/{id}', [KedatanganTamuController::class, 'gagal'])->name('tamuGagal');
     Route::post('/keterangan', [KedatanganTamuController::class, 'keterangan'])->name('ubahKeteranganTamu');
+
 });
 
 Route::middleware('CheckRole:fo')->prefix('fo')->group(function () {
@@ -96,7 +97,7 @@ Route::middleware('CheckRole:fo')->prefix('fo')->group(function () {
 
     Route::get('/kunjungan', [HomeController::class, 'kunjungan'])->name('frontoffice.kunjungan');
     Route::post('/kunjungan', [HomeController::class, 'kunjunganSearch'])->name('frontoffice.kunjunganSearch');
-    Route::get('/laporan', [HomeController::class, 'laporan'])->name('fo.laporan');
+    Route::get('/laporan', [HomeController::class, 'laporan'])->name('frontoffice.laporan');
     Route::post('/laporan/kurir', [HomeController::class, 'laporanSearchKurir'])->name('frontoffice.laporanSearchKurir');
     Route::post('/laporan/tamu', [HomeController::class, 'laporanSearchTamu'])->name('frontoffice.laporanSearchTamu');
     Route::get('/laporan/kurir', [HomeController::class, 'laporanKurir'])->name('frontoffice.laporanKurir');
@@ -118,10 +119,26 @@ Route::middleware('CheckRole:fo')->prefix('fo')->group(function () {
 
 Route::get('pegawai/login', [PegawaiLoginController::class, 'loginPage'])->name('pegawai.login');
 
+Route::get('/', [UserController::class, 'index'])->name('beranda');
+// Route::get('user/login', [UserController::class, 'loginpop'])->name('loginn');
+Route::get('user/kedTamu', [UserController::class, 'tamu'])->name('kedTamu');
+Route::post('user/kedTamu/create', [UserController::class, 'tambahtamu'])->name('tambahkedTamu');
+Route::get('user/kedKurir', [UserController::class, 'kurir'])->name('kedKurir');
+Route::post('user/kedKurir/create', [UserController::class, 'tambahkurir'])->name('tambahkedKurir');
+Route::get('user/datGuru', [UserController::class, 'guru'])->name('datGuru');
+Route::get('user/datTendik', [UserController::class, 'tendik'])->name('datTendik');
+Route::get('user/about', [UserController::class, 'about'])->name('about');
+Route::get('/search-tamu', [UserController::class, 'searchTamu'])->name('searchTamu');
+
+
 // Route::get('/logout', function () {
 //     Auth::logout();
 //     return redirect(route('login'));
 // });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Auth::routes();
 

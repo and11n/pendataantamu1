@@ -73,16 +73,16 @@
 <div style="margin-top: 54px; width: 200px;" class="offcanvas offcanvas-start" data-bs-scroll="true"
     data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
     <div style="color: #B1B1B1; padding-left: 0px; padding-right: 0px;" class="offcanvas-body mt-4 ps-3 d-flex flex-column gap-2">
-        <x-sidebar-item :href="route('admin.dashboard')" :active="request()->routeIs('dashboard')" :img="asset('img/home.png')" :activeimg="asset('img/home-active.png')">
+        <x-sidebar-item :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" :img="asset('img/home.png')" :activeimg="asset('img/home-active.png')">
             Dashboard
         </x-sidebar-item>
-        <x-sidebar-item :href="route('admin.pegawai')" :active="request()->routeIs('pegawai')" :img="asset('img/pegawai.png')" :activeimg="asset('img/pegawai-active.png')">
+        <x-sidebar-item :href="route('admin.pegawai')" :active="request()->routeIs('admin.pegawai')" :img="asset('img/pegawai.png')" :activeimg="asset('img/pegawai-active.png')">
             Pegawai
         </x-sidebar-item>
-        <x-sidebar-item :href="route('admin.kunjungan')" :active="request()->routeIs('kunjungan')" :img="asset('img/kunjungan.png')" :activeimg="asset('img/kunjungan-active.png')">
+        {{-- <x-sidebar-item :href="route('admin.kunjungan')" :active="request()->routeIs('admin.kunjungan')" :img="asset('img/kunjungan.png')" :activeimg="asset('img/kunjungan-active.png')">
             Kunjungan
-        </x-sidebar-item>
-        <x-sidebar-item :href="route('admin.laporan')" :active="request()->routeIs('laporan') || request()->routeIs('laporanKurir')" :img="asset('img/laporan.png')" :activeimg="asset('img/laporan-active.png')">
+        </x-sidebar-item> --}}
+        <x-sidebar-item :href="route('admin.laporan')" :active="request()->routeIs('admin.laporan') || request()->routeIs('laporanKurir')" :img="asset('img/laporan.png')" :activeimg="asset('img/laporan-active.png')">
             Laporan
         </x-sidebar-item>
     </div>
@@ -93,6 +93,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
     @yield('script')
+    @stack('myscript')
 </body>
 
 </html>
