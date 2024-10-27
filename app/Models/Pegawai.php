@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class Pegawai extends Authenticatable
 {
     use Notifiable;
+    protected $primaryKey = 'nip';
     protected $fillable = ["nip", "id_user", "ptk", "no_telp"];
     use HasFactory;
 

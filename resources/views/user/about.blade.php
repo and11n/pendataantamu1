@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tentang Kami - GuBook</title>
     <link href="{{ asset('css/us.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -57,13 +58,26 @@
             </div>
             <div class="contact-info">
                 <div class="card" style="width: 32rem; height: 32rem; background-color:#E3F2FD">
-                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                        <h5 class="card-title" style="font-size: 2rem;">Kontak</h5>
-                        <p class="card-text" style="font-size: 1.5rem;">Silahkan Hubungi Kami dibawah ini</p>
-                        <a href="#" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">email@gmail.com</a>
-                        <a href="#" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">(022) 6652442</a><br>
-                        <a href="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15844.002498366064!2d107.5583301!3d-6.8905271!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e6bd6aaaaaab%3A0xf843088e2b5bf838!2sSMK%20Negeri%2011%20Bandung!5e0!3m2!1sen!2sid!4v1725437798559!5m2!1sen!2sid" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">4H55+Q8 Sukaraja, Bandung City, West Java</a><br>
-                        <a href="#" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">@info.smkn11bdg</a>
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center"><br>
+                        <h5 class="card-title" style="font-size: 2.2rem; text-align:center;">Kontak</h5>
+                        <p class="card-text" style="font-size: 1.5rem; text-align:center;">Silahkan Hubungi Kami dibawah ini</p><br>
+                        <div style="text-align: center;">
+                            <a href="tel:+62226652442" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">
+                                <i class="bi bi-telephone"></i> (022) 6652442
+                            </a><br><br>
+                            <a href="https://web.facebook.com/smkn11bdg/?_rdc=1&_rdr" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">
+                                <i class="bi bi-facebook"></i> Wargi Sabelas
+                            </a><br><br>
+                            <a href="https://www.instagram.com/info.smkn11bandung" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">
+                                <i class="bi bi-instagram"></i> @info.smkn11bdg
+                            </a><br><br>
+                            <a href="https://www.youtube.com/c/SMKN11BANDUNG" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">
+                                <i class="bi bi-youtube"></i> SMKN11BANDUNG
+                            </a><br><br>
+                            <a href="mailto:smkn11bdg@gmail.com" class="card-link" style="text-decoration: none; color:#666666; font-size:1.25rem;">
+                                <i class="bi bi-envelope"></i> smkn11bdg@gmail.com
+                            </a>
+                        </div>
                       </div>
                 </div>
             </div>

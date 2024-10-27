@@ -11,6 +11,7 @@
         <title>@yield('title')</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         @yield('style')
     </head>
     <link href="{{ asset('css/user.css') }}" rel="stylesheet">
@@ -23,7 +24,7 @@
         </div>
         <nav>
             <a href="{{ route('beranda') }}">Beranda</a>
-            <a href="{{ route('datGuru') }}">Pegawai</a>
+            {{-- <a href="{{ route('datGuru') }}">Pegawai</a> --}}
             <a href="{{ route('about') }}">Tentang</a>
             <div id="loginPopup" class="popup" style="display: none;">
                 <div class="popup-content">
@@ -64,8 +65,10 @@
                     function closePopup() {
                         document.getElementById('loginPopup').style.display = 'none';
                     }
-
         </script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </main>
 </body>
 

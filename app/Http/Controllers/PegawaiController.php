@@ -9,18 +9,66 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PegawaiImport;
+use App\Models\KedatanganTamu;
 
 class PegawaiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $wali = Pegawai::with('user');
+        // Retrieve the paginated data with the user relationship
         $data = Pegawai::with('user')->paginate(10);
-        // dd($data);
-        return view('admin/pgww', compact('data', 'wali'));
+
+        // Check if the request has the 'body_ptk' filter
+        if ($request->has('body_ptk') && $request->body_ptk != 'all') {
+            switch ($request->body_ptk) {
+                case 'matematika':
+                    // Filter by 'ptk' field for 'matematika'
+                    $data = Pegawai::with('user')->where('ptk', 'matematika')->paginate(10);
+                    break;
+                case 'produktif rpl':
+                    // Filter records created within the current week
+                    $data = Pegawai::with('user')->where('ptk', 'produktif rpl')->paginate(10);
+                    break;
+                case 'produktif akl':
+                    // Filter records created in the current month
+                    $data = Pegawai::with('user')->where('ptk', 'Produktif AKL')->paginate(10);
+                    break;
+                case 'inggris':
+                    // Filter records created in the current month
+                    $data = Pegawai::with('user')->where('ptk', 'Inggris')->paginate(10);
+                    break;
+            }
+        }
+
+        // // Check if the request has the 'search' filter
+        // if ($request->has('search')) {
+        //     $search = $request->input('search');
+        //     $data = Pegawai::with('user')
+        //         ->where('user.nama_user', 'like', '%' . $search . '%')
+        //         ->orWhere('pegawai.ptk', 'like', '%' . $search . '%')
+        //         ->orWhere('user.nama_user', 'like', '%' . $search . '%')
+        //         ->paginate(10);
+        // }
+
+        $query = Pegawai::with('user');
+
+        if ($request->has('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereHas('user', function($userQuery) use ($searchTerm) {
+                    $userQuery->where('nama_user', 'like', $searchTerm);
+                })
+                ->orWhere('nip', 'like', $searchTerm);
+            });
+        }
+
+        $data = $query->paginate(10); // Execute the query and retrieve the filtered data
+
+        // Return the view with the data and other variables
+        return view('admin/pgww', compact('data'));
     }
 
     /**
@@ -115,22 +163,22 @@ class PegawaiController extends Controller
         return redirect()->route('admin.pegawai');
     }
 
-    public function pegawaiSearch(Request $request)
-    {
-        $searchTerm = $request->search != null ? $request->search : "";
-        // return response()->json($request->all());
-        $datas = Pegawai::where(function ($query) use ($searchTerm) {
-            $query->where('nama', 'like', "%{$searchTerm}%")
-                ->orWhere('email', 'like', "%{$searchTerm}%")
-                ->orWhere('NIP', 'like', "%{$searchTerm}%")
-                ->orWhere('no_telp', 'like', "%{$searchTerm}%")
-            ;
-        })
-            ->where('ptk', $request->ptk)
-            ->orderBy('created_at', 'desc')
-            ->paginate($request->entry);
-        return response()->json(compact('datas'));
-    }
+    // public function pegawaiSearch(Request $request)
+    // {
+    //     $searchTerm = $request->search != null ? $request->search : "";
+    //     // return response()->json($request->all());
+    //     $datas = Pegawai::where(function ($query) use ($searchTerm) {
+    //         $query->where('nama', 'like', "%{$searchTerm}%")
+    //             ->orWhere('email', 'like', "%{$searchTerm}%")
+    //             ->orWhere('NIP', 'like', "%{$searchTerm}%")
+    //             ->orWhere('no_telp', 'like', "%{$searchTerm}%")
+    //         ;
+    //     })
+    //         ->where('ptk', $request->ptk)
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate($request->entry);
+    //     return response()->json(compact('datas'));
+    // }
 
     /**
      * Update the specified resource in storage.

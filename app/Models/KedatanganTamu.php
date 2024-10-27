@@ -19,7 +19,9 @@ class KedatanganTamu extends Model
         'qr_code',
         'waktu_perjanjian',
         'waktu_kedatangan',
-        'status'
+        'status',
+        'alasan',
+        'token'
     ];
 
     // Relasi ke model Pegawai

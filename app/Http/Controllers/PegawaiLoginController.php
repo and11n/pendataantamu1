@@ -13,21 +13,80 @@ use App\Models\Pegawai;
 
 class PegawaiLoginController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Menghitung jumlah tamu hari ini
-        $countTamuHari = KedatanganTamu::whereDate('created_at', Carbon::today())->count();
+        $queryTamu = KedatanganTamu::where('waktu_kedatangan', '!=', null);
+        $queryEkspedisi = KedatanganEkspedisi::where('waktu_kedatangan', '!=', null);
 
-        // Menghitung jumlah kurir hari ini (jika diperlukan)
-        $countKurirHari = KedatanganEkspedisi::whereDate('created_at', Carbon::today())->count();
+        $user_id = Auth::user()->id;
 
-        $countGuru = Pegawai::count();
-        // dd($countGuru);
+        // Menghitung jumlah tamu dan kurir hari ini
+        $pegawai = Pegawai::where('id_user', $user_id)->first();
 
-        // $countTendik = Pegawai::count();
+        $nip = $pegawai->nip;
 
-        // Kirim variabel ke view
-        return view('pegawai.dashboard', compact('countTamuHari', 'countKurirHari', 'countGuru'));
+        $totalTamuPegawai = KedatanganTamu::where('id_pegawai', $nip)
+        ->whereMonth('created_at', Carbon::now()->month) // Use whereMonth to filter by month
+        ->count();
+
+        $totalKurirPegawai = KedatanganEkspedisi::where('id_pegawai', $nip)
+        ->whereMonth('created_at', Carbon::now()->month) // Use whereMonth to filter by month
+        ->count();
+
+        // Data Chart
+        // Mendapatkan data untuk 12 bulan dalam tahun ini
+        $selectedMonth = $request->bulan ?? now()->month;
+        $startOfMonth = Carbon::create(null, $selectedMonth)->startOfMonth();
+        $daysInMonth = $startOfMonth->daysInMonth;
+        $months = [];
+        $tamu = [];
+        $kurir = [];
+
+        // Mengisi data untuk setiap hari dalam bulan ini
+        for ($i = 0; $i < $daysInMonth; $i++) {
+            // Format nama hari
+            $currentDate = $startOfMonth->copy()->addDays($i); // Menggunakan copy untuk tidak mengubah $startOfMonth
+            $months[] = $currentDate->format('d M'); // Format tanggal
+
+            // Ambil jumlah tamu dan kurir per hari, default ke 0 jika tidak ada data
+            $tamuCount = KedatanganTamu::whereDate('created_at', $currentDate)->count();
+            $kurirCount = KedatanganEkspedisi::whereDate('created_at', $currentDate)->count();
+
+            $tamu[] = $tamuCount > 0 ? $tamuCount : 0; // Menyimpan jumlah tamu, default ke 0
+            $kurir[] = $kurirCount > 0 ? $kurirCount : 0; // Menyimpan jumlah kurir, default ke 0
+        }
+
+        // Menyusun data grafik
+        $chartData = [
+            "kurir" => $kurir,
+            "tamu" => $tamu,
+            "labels" => $months,
+        ];
+
+        if ($request->has('bulan') && $request->bulan != 'all') {
+            $queryTamu->whereMonth('created_at', $selectedMonth);
+            $queryEkspedisi->whereMonth('created_at', $selectedMonth);
+        }
+
+        $tamuDatang = KedatanganTamu::where('id_pegawai', $nip)
+            ->whereDate('created_at', Carbon::today())
+            ->get();
+
+        $tamuMenunggu = KedatanganTamu::where('id_pegawai', $nip)
+            ->where('status', 'menunggu')
+            ->whereDate('created_at', Carbon::today())
+            ->get();
+        
+        $tamuDitolak = KedatanganTamu::where('id_pegawai', $nip)
+            ->where('status', 'ditolak')
+            ->whereDate('created_at', Carbon::today())
+            ->get();
+
+        $kurirHari = KedatanganEkspedisi::where('id_pegawai', $nip)
+            ->whereDate('created_at', Carbon::today())
+            ->get();
+
+        return view('pegawai.dashboard', compact('totalTamuPegawai', 'totalKurirPegawai', 'chartData', 'tamuDatang', 'tamuMenunggu', 'tamuDitolak', 'kurirHari'));
     }
 
     public function loginPage()

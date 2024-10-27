@@ -13,9 +13,14 @@
     </header>
 
     <main>
-        <div class="search-box">
-            <input type="text" placeholder="Search..." id="search">
-        </div>
+        <form action="{{ route('datTendik') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cari pegawai" value="{{ request('search') }}">
+                {{-- <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                </div> --}}
+            </div>
+        </form>
 
         <table class="data-table">
             <thead>
@@ -23,11 +28,24 @@
                     <th>#</th>
                     <th>NIP</th>
                     <th>Nama</th>
-                    <th>Detail</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Data rows will be populated here -->
+                <tr>
+                    <td>1</td>
+                    <td>196508011993031010</td>
+                    <td>Asep Rachmat, S.Pd</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>196508231991122001</td>
+                    <td>Ela Solihat, S.Pd</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>197507212014101003</td>
+                    <td>Hata, S.Kom</td>
+                </tr>
             </tbody>
         </table>
 

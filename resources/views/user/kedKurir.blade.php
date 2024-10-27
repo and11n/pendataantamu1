@@ -49,7 +49,8 @@
                             placeholder="Masukkan No HP">
                     </div>
                     <div class="form-group">
-                        <input required type="date" class="form-control" style="text-decoration: none; color:#666666;" id="tanggal_waktu" name="tanggal_waktu">
+                        <input required type="datetime-local" class="form-control" id="tanggal_waktu" name="tanggal_waktu">
+                        <label for="tanggal_waktu" class="floating-label">Waktu Kedatangan</label>
                     </div>
                     {{-- <div class="form-group"> --}}
                         <button type="button" class="form-control" style="text-decoration: none; color:#666666; text-align:left" data-bs-toggle ="modal" data-bs-target="#exampleModal">Buka Kamera</button>
@@ -72,14 +73,14 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close">Close</button>
-                                        <button type="button" id="save" class="btn btn-primary" style="display: none">Simpan</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close">Ulang</button>
+                                        <button type="button" id="save" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Simpan</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <input type="hidden" id="foto-data" name="foto">
+                        <input type="hidden" id="foto-data" name="image">
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
@@ -89,8 +90,8 @@
                                 const saveButton = document.getElementById('save');
                                 const closeButton = document.getElementById('close');
                                 const fotoPreview = document.getElementById('foto-preview');
-                                const fotoLabel = document.getElementById('foto-label');
-                                const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                                const modalElement = document.getElementById('exampleModal');
+                                const modal = new bootstrap.Modal(modalElement);
                                 let stream;
                                 let fotoTaken = false;
 
@@ -114,7 +115,7 @@
                                     }
                                 }
 
-                                document.getElementById('exampleModal').addEventListener('show.bs.modal', function(e) {
+                                modalElement.addEventListener('show.bs.modal', function(e) {
                                     if (fotoTaken) {
                                         video.style.display = 'none';
                                         fotoPreview.style.display = 'block';
@@ -129,14 +130,13 @@
                                     }
                                 });
 
-                                document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function(e) {
+                                modalElement.addEventListener('hidden.bs.modal', function(e) {
                                     stopCamera();
                                 });
 
                                 snapButton.addEventListener('click', function() {
                                     const context = canvas.getContext('2d');
 
-                                    // Flip the canvas horizontally before drawing the video frame
                                     context.save();
                                     context.scale(-1, 1); // Flip horizontally
                                     context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
@@ -149,9 +149,6 @@
                                     snapButton.style.display = 'none';
                                     saveButton.style.display = 'inline-block';
                                     fotoTaken = true;
-
-                                    // Hide the label when the photo is taken
-                                    fotoLabel.style.display = 'none';
 
                                     stopCamera();
                                 });

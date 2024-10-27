@@ -58,7 +58,8 @@
                                 placeholder="Masukkan No HP">
                         </div>
                         <div class="form-group">
-                            <input required type="date" class="form-control" style="text-decoration: none; color:#666666;" id="waktu_perjanjian" name="waktu_perjanjian">
+                            <input required type="datetime-local" class="form-control" id="waktu_perjanjian" name="waktu_perjanjian">
+                            <label for="waktu_perjanjian" class="floating-label">Waktu Perjanjian</label>
                         </div>
                         <div class="form-group">
                             <input required type="text" class="form-control" style="text-decoration: none; color:#666666;" id="instansi" name="instansi"
@@ -67,7 +68,7 @@
                     </div>
                 </div>
                 <div class="w-full d-flex justify-content-end mt-4">
-                    <button type="button" class="btn btn-secondary me-4" style="border-radius: 9px;">Batal</button>
+                    {{-- <button type="button" class="btn btn-secondary me-4" style="border-radius: 9px;">Batal</button> --}}
                     <button type="submit" class="btn btn-warning" style="border-radius: 9px;">Kirim</button>
                 </div>
             </form>

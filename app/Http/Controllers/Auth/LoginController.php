@@ -36,7 +36,7 @@ class LoginController extends Controller
         } elseif ($role == 'fo') {
             return route('frontoffice.dashboard');
         } else {
-            return '/beranda'; // URL default jika role tidak cocok
+            return '/'; // URL default jika role tidak cocok
         }
 
     }

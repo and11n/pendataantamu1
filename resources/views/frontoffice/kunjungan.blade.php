@@ -8,212 +8,289 @@
                 <h6>Kunjungan</h6>
             </div> --}}
 
-            <div class="d-flex gap-3">
-                <div class="w-100">
-                    <h4>Kunjungan</h4>
-                    <h5>Kedatangan Tamu</h5>
-                    <div class="d-flex gap-4">
-                        <div style="width: 33%;border-radius: 20px"
-                            class="bg-white d-flex justify-content-center align-items-center gap-3 p-3 py-5 shadow">
-                            <div>
-                                <img style="height: fit-content" src="{{ asset('img/belum datang.png') }}" alt="belum datang">
-                            </div>
-                            <div>
-                                {{-- <div>{{ $tamuBelumDatang }} orang</div> --}}
-                                <h6>Belum Datang</h6>
-                            </div>
-                        </div>
-                        <div style="width: 33%;border-radius: 20px"
-                            class="bg-white d-flex justify-content-center align-items-center gap-3 p-3 py-5 shadow">
-                            <div>
-                                <img style="height: fit-content" src="{{ asset('img/selesai.png') }}" alt="belum datang">
-                            </div>
-                            <div>
-                                {{-- <div>{{ $tamuSelesai }} orang</div> --}}
-                                <h6>Selesai</h6>
-                            </div>
-                        </div>
-                        <div style="width: 33%;border-radius: 20px"
-                            class="bg-white d-flex justify-content-center align-items-center gap-3 p-3 py-5 shadow">
-                            <div>
-                                <img style="height: fit-content" src="{{ asset('img/tidak hadir.png') }}"
-                                    alt="belum datang">
-                            </div>
-                            <div>
-                                {{-- <div>{{ $tamuGagal }} orang</div> --}}
-                                <h6>Tidak Hadir</h6>
-                            </div>
-                        </div>
+            <div class="d-flex gap-4">
+                <!-- Box untuk status 'Belum Datang' -->
+                <div style="width: 33%; border-radius: 20px"
+                    class="bg-white d-flex justify-content-center align-items-center gap-3 p-3 py-5 shadow">
+                    <div>
+                        <img style="height: fit-content" src="{{ asset('img/belum datang.png') }}" alt="belum datang">
+                    </div>
+                    <div>
+                        <div>{{ $tamuBelumDatang ?? '0' }} orang</div>
+                        <h6>Belum Datang</h6>
+                    </div>
+                </div>
+
+                <!-- Box untuk status 'Selesai' -->
+                <div style="width: 33%; border-radius: 20px"
+                    class="bg-white d-flex justify-content-center align-items-center gap-3 p-3 py-5 shadow">
+                    <div>
+                        <img style="height: fit-content" src="{{ asset('img/selesai.png') }}" alt="selesai">
+                    </div>
+                    <div>
+                        <div>{{ $tamuSelesai ?? '0' }} orang</div>
+                        <h6>Selesai</h6>
+                    </div>
+                </div>
+
+                <!-- Box untuk status 'Tidak Hadir' -->
+                <div style="width: 33%; border-radius: 20px"
+                    class="bg-white d-flex justify-content-center align-items-center gap-3 p-3 py-5 shadow">
+                    <div>
+                        <img style="height: fit-content" src="{{ asset('img/tidak hadir.png') }}" alt="tidak hadir">
+                    </div>
+                    <div>
+                        <div>{{ $tamuGagal ?? '0' }} orang</div>
+                        <h6>Tidak Hadir</h6>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="bg-white p-3 shadow" style="border-radius: 25px">
+        <div class="bg-white p-3 shadow" style="border-radius: 25px; width: 300px; height: 300px;">
             <h5>Data Tamu</h5>
-            {{-- <p>{{ $text }}</p> --}}
-            <div>
-                <canvas id="ola"></canvas>
-            </div>
+            <canvas id="ola"></canvas>
         </div>
     </div>
-    <div class="mt-5 bg-white p-4 shadow d-flex flex-column gap-2" style="border-radius: 20px">
-        <div class="d-flex gap-2 my-3">
-            <div class="d-flex bg-white p-3 shadow" style="border-radius: 15px;border:1px solid rgb(220, 225, 255)">
-                <img width="24" height="24" src="{{ asset('img/akar-icons_search.png') }}" alt="search">
-                <input oninput="search()" class="bg-white" style="border: none;" type="text" name="search"
-                    id="search_2">
-                <img width="24" height="24" src="{{ asset('img/uil_calender.png') }}" alt="calendar">
-            </div>
-            <select class="form-select" onchange="search()" name="status" id="status">
-                <option value="menunggu">Menunggu</option>
-                <option value="diterima">Diterima</option>
-                <option value="ditolak">Ditolak</option>
-                <option value="tidakDatang">Tidak Datang</option>
-                <option value="selesai">Selesai</option>
-            </select>
-        </div>
-        <div id="myTable">
-            <div class="d-flex justify-content-center">
-                {{-- {{ $datas->links('pagination::bootstrap-5') }} --}}
-            </div>
-            {{-- <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nama</th>
-                        <th>Pegawai</th>
-                        <th>Waktu Perjanjian</th>
-                        <th>Waktu Kedatangan</th>
-                        <th colspan="2">status</th>
-                        <th>Detail</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($datas as $data)
-                        <tr>
-                            <td>{{ $data->nama }}</td>
-                            <td>{{ $data->pegawai->nama }}</td>
-                            <td>{{ $data->waktu_perjanjian }}</td>
-                            <td>{{ $data->waktu_kedatangan == null ? '-' : $data->waktu_kedatangan }}</td>
-                            @if ($data->status == 'menunggu')
-                                <td>
-                                    <a href="{{ route('terimaTamu', $data->id) }}">
-                                        <button class="btn btn-success">Terima</button>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{ route('tolakTamu', $data->id) }}">
-                                        <button class="btn btn-danger">Tolak</button>
-                                    </a>
-                                </td>
-                            @elseif ($data->status == 'diterima')
-                                <td>
-                                    <a href="{{ route('tambahKedatanganTamu', $data->id) }}">
-                                        <button class="btn btn-primary">Tambahkan Waktu Kedatangan</button>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{ route('tamuGagal', $data->id) }}">
-                                        <button class="btn btn-danger">Tamu Tidak Datang</button>
-                                    </a>
-                                </td>
-                            @elseif ($data->status == 'selesai')
-                                <td class="text-success" colspan="2">
-                                    Selesai
-                                </td>
-                            @elseif ($data->status == 'ditolak')
-                                <td class="text-danger" colspan="2">
-                                    Ditolak
-                                </td>
-                            @elseif ($data->status == 'tidakDatang')
-                                <td class="text-danger" colspan="2">
-                                    Tidak Datang
-                                </td>
-                            @endif
-                            <td>
-                                <!-- Button trigger modal -->
-                                <button type="button" data-bs-toggle="modal"
-                                    data-bs-target="#detail{{ $data->id }}Modal" class="btn"><img
-                                        src="{{ asset('img/detail.png') }}" alt="detail"></button>
-                                <div class="modal fade" id="detail{{ $data->id }}Modal" tabindex="-1"
-                                    aria-labelledby="detail{{ $data->id }}Modal" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="detail{{ $data->id }}Label">Detail
-                                                </h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Nama Tamu : {{ $data->nama }}
-                                                Bertemu Dengan : {{ $data->pegawai->nama }}
-                                                Waktu Pertemuan : {{ $data->waktu_kedatangan }}
-                                                <form id="formKeterangan" action="{{ route('ubahKeteranganTamu') }}"
-                                                    method="post">
-                                                    @csrf
-                                                    Keterangan :
-                                                    <textarea name="keterangan" id="keterangan" cols="30" rows="10" class="form-control">{{ $data->keterangan }}</textarea>
-                                                    <input type="hidden" name="id" value="{{ $data->id }}">
-                                                </form>
-                                                @if ($data->foto != null)
-                                                    <img src="{{ asset('img/tamu/' . $data->foto) }}" alt="">
-                                                @endif
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
-                                                <button type="button"
-                                                    onclick="document.getElementById('formKeterangan').submit()"
-                                                    class="btn btn-primary">Simpan Keterangan</button>
+    <div class="row">
+        <div class="col-6">
+            <div class="card h-80 w-12" style="overflow-y: auto; max-height: 500px;">
+                <div class="card-body">
+                    <form action="{{ route('pegawai.kunjungan') }}" method="GET" id="searchForm" style="position: sticky; top: 0; background-color: white; z-index: 100; padding-bottom: 10px;">
+                        <h5 class="card-title">Kunjungan Diterima</h5>
+                        <select class="form-select" name="status" id="status" onchange="document.getElementById('searchForm').submit()">
+                            <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Semua</option>
+                            <option value="waiting" {{ request('status') == 'waiting' ? 'selected' : '' }}>Sudah Datang</option>
+                            <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>Belum Datang</option>
+                        </select>
+                        <input type="text" name="search" class="form-control mb-3" placeholder="Cari Nama Pengunjung" id="searchInput">
+                    </form>     
+                    @forelse ($listKunjungan as $kedatangan)
+                        @if ($kedatangan->status != 'menunggu')
+                            @if ($kedatangan->tamu)
+                                <div class="mb-3">
+                                    <h6>Kedatangan Tamu</h6>
+                                    <p>
+                                        <strong>Nama Pengunjung:</strong>
+                                        {{ $kedatangan->tamu->nama }}
+                                        <br>
+                                        <strong>Pegawai yang Dikunjungi:</strong>
+                                        {{ $kedatangan->pegawai->user->nama_user }}<br>
+                                        <strong>Waktu Kedatangan:</strong>
+                                        {{ $kedatangan->waktu_perjanjian }}
+                                    </p>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ $kedatangan->id }}">
+                                        Detail
+                                    </button>
+                                    <div class="modal fade" id="detailModal{{ $kedatangan->id }}" tabindex="-1" aria-labelledby="detailModal{{ $kedatangan->id }}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="detailModal{{ $kedatangan->id }}Label">Detail Pegawai</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><b>Nama Tamu :</b> {{ $kedatangan->tamu->nama }}</p>
+                                                    <p><b>Dengan :</b> {{ $kedatangan->pegawai->user->nama_user }}</p>
+                                                    <p><b>Waktu Perjanjian :</b> {{ $kedatangan->waktu_perjanjian }}</p>
+                                                    <p><b>Waktu Pertemuan :</b> {{ $kedatangan->waktu_kedatangan }}</p>
+                                                    <b>Foto:</b> <br><img src="{{ Storage::url('public/' . $kedatangan->foto) }}" alt="Foto Tamu" class="img-fluid"><br>
+                                                    @if ($kedatangan->foto != null)
+                                                        <img src="{{ asset('img/tamu/' . $kedatangan->foto) }}" alt="">
+                                                    @endif
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table> --}}
-            {{-- <div class="d-flex justify-content-center">
-                {{ $datas->links('pagination::bootstrap-5') }}
-            </div> --}}
+                            @endif
+                        @endif
+                    @empty
+                        <p class="text-center">Tidak ada kunjungan yang ditemukan.</p>
+                    @endforelse
+                    <div class="d-flex justify-content-center">
+                        {{ $listKunjungan->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card h-80 w-12" style="overflow-y: auto; max-height: 500px;">
+                <div class="card-body">
+                     <form action="{{ route('frontoffice.kunjungan') }}" method="GET" style="position: sticky; top: 0; background-color: white; z-index: 100; padding-bottom: 10px;">
+                    <h5 class="card-title">Aktivitas Kunjungan</h5>
+                    </form>
+                    @forelse ($listKunjungan as $kedatangan)
+                        @if ($kedatangan->status === 'menunggu')
+                            <div class="mb-3">
+                                <h5 class="card-title">
+                                    @if ($kedatangan->tamu)
+                                        Kedatangan Tamu
+                                    @else
+                                        Kedatangan Ekspedisi
+                                    @endif
+                                </h5>
+                                <p class="card-text">
+                                    <strong>Nama Pengunjung:</strong>
+                                    @if ($kedatangan->tamu)
+                                        {{ $kedatangan->tamu->nama }}
+                                    @elseif($kedatangan->ekspedisi)
+                                        {{ $kedatangan->ekspedisi->nama_kurir }}
+                                    @else
+                                        Tidak tersedia
+                                    @endif
+                                    <br>
+                                    <strong>Pegawai yang Dikunjungi:</strong>
+                                    {{ $kedatangan->pegawai->user->nama_user }}<br>
+                                    @if ($kedatangan->tamu)
+                                        <strong>Waktu Kedatangan:</strong>
+                                        {{ $kedatangan->waktu_perjanjian }}
+                                    @else
+                                        <strong>Waktu Kedatangan:</strong>
+                                        {{ $kedatangan->tanggal_waktu }} <br>
+                                        <strong>Ekspedisi:</strong>
+                                        {{ $kedatangan->ekspedisi->ekspedisi }}
+                                    @endif
+                                </p>
+                                <form action="{{ route('update.status') }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="id" value="{{ $kedatangan->id }}">
+                                    <button type="submit" name="status" value="diterima"
+                                        class="btn btn-warning">Terima</button>
+                                </form>
+
+                                <form action="{{ route('update.status') }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="id" value="{{ $kedatangan->id }}">
+                                    <button type="button" name="status" value="ditolak"
+                                        class="btn btn-danger">Tolak</button>
+                                    <div class="alasanField" style="display: none;">
+                                        <input type="hidden" name="status" value="ditolak">
+                                        <label for="alasan">Alasan Penolakan:</label>
+                                        <textarea name="alasan" id="alasan" class="form-control"></textarea>
+                                        <button type="submit" class="btn btn-info">Kirim Alasan</button>
+                                    </div>
+                                </form>
+
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#detailModal{{ $kedatangan->id }}">
+                                    Detail
+                                </button>
+                                <div class="modal fade" id="detailModal{{ $kedatangan->id }}" tabindex="-1"
+                                    aria-labelledby="detailModalLabel{{ $kedatangan->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="detailModalLabel{{ $kedatangan->id }}">Detail
+                                                    Kedatangan</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Nama:</strong> {{ $kedatangan->nama }}</p>
+                                                <p><strong>Tanggal:</strong> {{ $kedatangan->tanggal }}</p>
+                                                <p><strong>Jenis:</strong>
+                                                    {{ $kedatangan instanceof \App\Models\KedatanganTamu ? 'Tamu' : 'Ekspedisi' }}
+                                                </p>
+                                                <p><strong>ID:</strong> {{ $kedatangan->id }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (!$loop->last)
+                                <hr>
+                            @endif
+                        @endif
+                        @empty
+                        <p class="text-center">Tidak ada kunjungan yang ditemukan.</p>
+                    @endforelse
+                </div>
+            </div>
         </div>
     </div>
-     {{-- const data = @json($chartData) --}}
 
-@endsection
+    @endsection
+
 @section('style')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 @endsection
+
 @section('script')
-    <script>
-        const ctx = document.getElementById("ola").getContext('2d');
-        // console.log(data);
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('ola').getContext('2d');
+
+        document.getElementById('searchInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission
+                const form = document.getElementById('searchForm');
+                form.submit(); // Submit the form
+            }
+        });
+
+        const data = {
+            diterima: {{ $diterima ?? 0 }},
+            ditolak: {{ $ditolak ?? 0 }},
+            menunggu: {{ $menunggu ?? 0 }},
+            diterimaPersen: {{ $diterimaPersen ?? 0 }},
+            ditolakPersen: {{ $ditolakPersen ?? 0 }},
+            menungguPersen: {{ $menungguPersen ?? 0 }}
+        };
 
         var myChart = new Chart(ctx, {
-            type: "pie",
+            type: 'pie',
             data: {
-                labels: ["Diterima : " + data.diterima + " Orang", "Ditolak : " + data.ditolak + " Orang",
-                    "Menunggu : " + data.menunggu + " Orang"
+                labels: [
+                    `Diterima: ${data.diterima} Orang`,
+                    `Ditolak: ${data.ditolak} Orang`,
+                    `Menunggu: ${data.menunggu} Orang`
                 ],
                 datasets: [{
-                    label: "Persentase",
+                    label: 'Persentase',
                     data: [data.diterimaPersen, data.ditolakPersen, data.menungguPersen],
+                    backgroundColor: ['#36a2eb', '#ff6384', '#ffce56'],
+                    hoverOffset: 10
                 }],
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
                     datalabels: {
+                        color: 'white',
+                        font: {
+                            weight: 'bold',
+                            size: 14
+                        },
                         formatter: function(value, context) {
-                            return value + "%";
+                            return Math.round(value) + '%';
                         }
                     }
                 }
             },
             plugins: [ChartDataLabels]
         });
-    </script>
-
-    <script src="{{ asset('js/kunjungan.js') }}"></script>
+    });
+</script>
+<script src="{{ asset('js/kunjungan.js') }}"></script>
 @endsection

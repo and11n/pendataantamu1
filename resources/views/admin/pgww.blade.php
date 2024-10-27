@@ -53,21 +53,33 @@
         <div class="d-flex justify-content-between">
             <h5>Data Pegawai</h5>
             <div class="d-flex w-50 gap-3">
-                <select onchange="search()" class="form-select" style="width: 20rem" name="body_ptk" id="body_ptk">
-                    <option selected value>PTK</option>
-                    <option value="produktif_rpl">Produktif RPL</option>
-                    <option value="matematika">Matematika</option>
-                    <option value="produktif_akl">Produktif AKL</option>
-                    <option value="inggris">Inggris</option>
-                </select>
-                <div style="background-color: #F5F7FA;width:60rem"
-                     class="rounded-pill d-flex gap-1 justify-content-center align-items-center p-1 px-3">
-                    <label for="search">
+                <form method="GET" action="{{ route('admin.pegawai') }}" id="filterForm">
+                    <select class="form-select" name="body_ptk" id="body_ptk"
+                        onchange="document.getElementById('filterForm').submit()">
+                        <option value="all" {{ request('body_ptk') == 'all' ? 'selected' : '' }}>PTK</option>
+                        <option value="produktif rpl" {{ request('body_ptk') == 'produktif rpl' ? 'selected' : '' }}>Produktif RPL</option>
+                        <option value="matematika" {{ request('body_ptk') == 'matematika' ? 'selected' : '' }}>Matematika</option>
+                        <option value="produktif akl" {{ request('body_ptk') == 'produktif akl' ? 'selected' : '' }}>Produktif AKL</option>
+                        <option value="inggris" {{ request('body_ptk') == 'inggris' ? 'selected' : '' }}>Inggris</option>
+                    </select>
+                </form>
+                <div style="background-color: #F5F7FA;width:60rem">
+                    {{-- <label for="search">
                         <img height="20" width="20" src="{{ asset('img/magnifying-glass 1.png') }}" alt="search">
-                    </label>
-                    <input oninput="search()" placeholder="Search"
-                           style="border: none;background-color: #F5F7FA;"
-                           class="form-control rounded-pill" type="text" name="search" id="search_2">
+                    </label> --}}
+                    {{-- <form action="{{ route('admin.pegawai') }}" method="GET">
+                        <input type="text" name="search" placeholder="Search"
+                               style="border: none;background-color: #F5F7FA;"
+                               class="form-control rounded-pill" id="search_2">
+                    </form> --}}
+                    <form action="{{ route('admin.pegawai') }}" method="GET">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control rounded-pill" style="border: none;background-color: #F5F7FA;" placeholder="Cari pegawai" value="{{ request('search') }}">
+                            {{-- <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                            </div> --}}
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -161,7 +173,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> --}}
                                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                                 </div>
                                             </form>
@@ -192,40 +204,3 @@
 @section('script')
     <script src="{{ asset('js/pegawai.js') }}"></script>
 @endsection
-
-@push('myscript')
-<script>
-document.getElementById('searchInput').addEventListener('input', function() {
-    filterTable();
-});
-
-document.getElementById('body_ptk').addEventListener('change', function() {
-    filterTable();
-});
-
-function filterTable() {
-    var input, filter, table, tr, td, i, j, txtValue;
-    var selectFilter = document.getElementById('body_ptk').value.toLowerCase();
-    input = document.getElementById('searchInput');
-    filter = input.value.toLowerCase();
-    table = document.querySelector('tbody');
-    tr = table.getElementsByTagName('tr');
-
-    for (i = 0; i < tr.length; i++) {
-        tr[i].style.display = 'none';
-        td = tr[i].getElementsByTagName('td');
-        for (j = 0; j < td.length; j++) {
-            if (td[j]) {
-                txtValue = td[j].textContent || td[j].innerText;
-                if (txtValue.toLowerCase().includes(filter) &&
-                    (selectFilter === "" || td[3].textContent.toLowerCase().includes(selectFilter))) {
-                    tr[i].style.display = '';
-                    break;
-                }
-            }
-        }
-    }
-}
-
-</script>
-@endpush

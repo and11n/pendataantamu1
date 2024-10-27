@@ -13,28 +13,36 @@
             <button class="btn text-white" style="background-color: gray;">Kurir</button>
         </a>
     </div>
-    <div class="d-flex flex-column gap-3">
-        <div class="d-flex gap-3 align-items-center">
-            <div>Show</div>
-            <select onchange="search()" class="form-select" style="width: 5rem" name="entries" id="entries">
-                <option selected value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-            </select>
-            <div>Entries</div>
-            <div class="d-flex bg-white p-3 shadow" style="border-radius: 15px;border:1px solid rgb(220, 225, 255)">
-                <img width="24" height="24" src="{{ asset('img/akar-icons_search.png') }}" alt="search">
-                <input oninput="search()" class="bg-white" style="border: none;" type="text" name="search"
-                    id="search_2">
-                <img width="24" height="24" src="{{ asset('img/uil_calender.png') }}" alt="calendar">
+    <div class="d-flex flex-column gap-3 bg-white p-3 shadow">
+        <div class="d-flex gap-3 align-items-center bg-white p-3 shadow">
+            <form action="{{ route('admin.laporanKurir') }}" method="GET">
+                <div class="d-flex gap-3"
+                    style="border-radius: 15px; border: 1px solid rgb(220, 225, 255); align-items: center;">
+                    {{-- <img width="24" height="24" src="{{ asset('img/akar-icons_search.png') }}" alt="search">
+                    <input class="bg-white border-0" type="text" name="search" id="search_2"
+                        value="{{ request('search') }}" placeholder="Search...">
+                    <img width="24" height="24" src="{{ asset('img/uil_calender.png') }}" alt="calendar"> --}}
+
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="Start Date" class="mx-2">
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="End Date">
+                    <button type="submit" class="btn btn-primary mx-2">Search</button>
+                </div>
+            </form>
+            <div class="d-flex gap-3">
+                <form method="GET" action="{{ route('admin.laporanKurir') }}" id="filterForm">
+                <select class="form-select" name="lama" id="lama"
+                onchange="document.getElementById('filterForm').submit()">
+                <option value="all" {{ request('lama') == 'all' ? 'selected' : '' }}>Semua</option>
+                <option value="day" {{ request('lama') == 'day' ? 'selected' : '' }}>Hari Ini</option>
+                <option value="week" {{ request('lama') == 'week' ? 'selected' : '' }}>Minggu Ini</option>
+                <option value="month" {{ request('lama') == 'month' ? 'selected' : '' }}>Bulan Ini</option>
+                </select>
+                </form>
             </div>
-            <select class="form-select" onchange="search()" name="lama" id="lama">
-                <option value="all">Semua</option>
-                <option value="day">Hari Ini</option>
-                <option value="week">Minggu Ini</option>
-                <option value="month">Bulan Ini</option>
-            </select>
-            <button class="btn btn-primary" style="width: 20rem">Export File</button>
+            <div class="d-flex gap-3">
+                <a href="{{ route('admin_exportKurir.excel') }}" class="btn btn-primary">Export to Excel</a>
+                <a href="{{ route('admin.exportKurir.pdf') }}" class="btn btn-danger">Export to PDF</a>
+            </div>
         </div>
         {{-- <form action="/laporan/kurir" method="post">
             @csrf
@@ -55,54 +63,39 @@
                     <thead>
                         <tr>
                             <th>Nama Kurir</th>
-                            <th>Nama Perusahaan Ekspedisi</th>
+                            <th>Ekspedisi</th>
                             <th>Pegawai Penerima</th>
                             <th>Tanggal & Waktu</th>
-                            <th>Detail</th>
+                            <th>Foto</th>
                         </tr>
                     </thead>
-                    {{-- <tbody>
-                        @foreach ($datas as $data)
+                    <tbody>
+                        @foreach ($kedatanganEkspedisi as $kurir)
                             <tr>
-                                <td>{{ $data->nama_kurir }}</td>
-                                <td>{{ $data->ekspedisi->nama }}</td>
-                                <td>{{ $data->pegawai->nama }}</td>
-                                <td>{{ $data->created_at }}</td>
+                                <td>{{ $kurir->ekspedisi->nama_kurir }}</td>
+                                <td>{{ $kurir->ekspedisi->ekspedisi }}</td>
+                                <td>{{ $kurir->pegawai->user->nama_user }}</td>
+                                <td>{{ $kurir->created_at }}</td>
                                 <td>
-                                    <button type="button" data-bs-toggle="modal"
-                                        data-bs-target="#detail{{ $data->id }}" class="btn"><img
-                                            src="{{ asset('img/detail.png') }}" alt="detail"></button>
-                                    <div class="modal fade" id="detail{{ $data->id }}" tabindex="-1"
-                                        aria-labelledby="detail{{ $data->id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
+                                    <!-- Icon Orang untuk membuka modal -->
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#detail{{ $kurir->id }}" class="btn">
+                                        <i class="bi bi-person-rolodex"></i>
+                                    </button>
+
+                                    <!-- Modal yang hanya menampilkan foto -->
+                                    <div class="modal fade" id="detail{{ $kurir->id }}" tabindex="-1" aria-labelledby="detail{{ $kurir->id }}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="detail{{ $data->id }}Label">Detail
-                                                        Pengiriman
-                                                    </h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
+                                                    <h5 class="modal-title" id="detail{{ $kurir->id }}Label">Foto Kurir</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div class="modal-body">
-                                                    <p>
-                                                        Nama Kurir : {{ $data->nama_kurir }}
-                                                    </p>
-                                                    <p>
-                                                        Penerima : {{ $data->pegawai->nama }}
-                                                    </p>
-                                                    <p>
-                                                        Perusahaan ekspedisi : {{ $data->ekspedisi->nama }}
-                                                    </p>
-                                                    @if ($data->foto != null)
-                                                        <img src="{{ asset('img/tamu/' . $data->foto) }}" alt="">
+                                                <div class="modal-body text-center">
+                                                    @if ($kurir->foto != null)
+                                                        <img src="{{ Storage::url($kurir->foto) }}" alt="Foto Kurir" class="img-fluid">
+                                                    @else
+                                                        <p>Foto tidak tersedia</p>
                                                     @endif
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                    <button type="button"
-                                                        onclick="document.getElementById('formKeterangan').submit()"
-                                                        class="btn btn-primary">Simpan Keterangan</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -110,12 +103,13 @@
                                 </td>
                             </tr>
                         @endforeach
-                    </tbody> --}}
+                    </tbody>
                 </table>
-            {{-- @endif
+
+            {{-- @endif --}}
             <div class="d-flex justify-content-center">
-                {{ $datas->links('pagination::bootstrap-5') }}
-            </div> --}}
+                {{ $kedatanganEkspedisi->links('pagination::bootstrap-5') }}
+            </div>
         </div>
     </div>
 @endsection

@@ -270,9 +270,9 @@ async function search() {
         entry: document.getElementById("entries").value,
         lama: document.getElementById("lama").value,
     };
+
     const apiUrl = `/laporan/kurir`;
     try {
-        // Send a POST request to the API
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
@@ -280,37 +280,25 @@ async function search() {
                 Accept: "application/json",
                 "X-CSRF-TOKEN": document
                     .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content"), // CSRF token for Laravel
+                    .getAttribute("content"),
             },
             body: JSON.stringify(dataToSend),
         });
-        console.log(
-            document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute("content")
-        );
 
-        // Check if the response is OK (status 200-299)
-        if (!response.ok) {
-            throw new Error("Network response was not ok " + response);
-        }
         const responseText = await response.text();
-        // console.log("Raw response text:", responseText);
+        console.log("Response:", responseText);
 
-        // Try parsing the response as JSON
         const data = JSON.parse(responseText);
-        // console.log(data);
+        console.log("Parsed data:", data);
 
-        // Set the data to a variable
+        // Pastikan data formatnya sesuai dengan yang diharapkan
         const myDataVariable = data.datas.data;
-
-        // Here you can manipulate the data or use it to update the UI
         createTableKurir(myDataVariable, data.datas);
     } catch (error) {
-        // Handle any errors that occurred during the fetch
         console.error("Error sending data:", error);
     }
 }
+console.log('Response text:', responseText);
 
 async function searchPag(apiUrl) {
     const dataToSend = {

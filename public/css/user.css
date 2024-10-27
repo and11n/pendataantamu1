@@ -303,6 +303,35 @@ footer {
     border-top: 1px solid rgba(255,255,255,0.2);
 }
 
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+input[type="datetime-local"] {
+    width: 100%;
+    padding: 10px 10px 10px 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    color: #333;
+}
+
+.floating-label {
+    position: absolute;
+    pointer-events: none;
+    top: -20px;
+    left: 5px;
+    font-size: 14px;
+    color: #666;
+    transition: 0.2s ease all;
+}
+
+input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #333;
+}
+
+
 @media (max-width: 768px) {
     .feature-cards, .contact, .footer-content {
         flex-direction: column;
