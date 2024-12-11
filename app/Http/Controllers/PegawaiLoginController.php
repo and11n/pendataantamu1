@@ -76,7 +76,7 @@ class PegawaiLoginController extends Controller
             ->where('status', 'menunggu')
             ->whereDate('created_at', Carbon::today())
             ->get();
-        
+
         $tamuDitolak = KedatanganTamu::where('id_pegawai', $nip)
             ->where('status', 'ditolak')
             ->whereDate('created_at', Carbon::today())
@@ -86,7 +86,17 @@ class PegawaiLoginController extends Controller
             ->whereDate('created_at', Carbon::today())
             ->get();
 
-        return view('pegawai.dashboard', compact('totalTamuPegawai', 'totalKurirPegawai', 'chartData', 'tamuDatang', 'tamuMenunggu', 'tamuDitolak', 'kurirHari'));
+        // Filter berdasarkan hari ini saja
+        $selesai = KedatanganTamu::where('status', 'diterima')
+            ->whereDate('created_at', Carbon::today())
+            ->get()
+            ->filter(function ($item) {
+                return $item->waktu_kedatangan !== null
+                    && $item->waktu_perjanjian !== null
+                    && Carbon::parse($item->waktu_kedatangan)->isToday();
+            });
+
+        return view('pegawai.dashboard', compact('totalTamuPegawai', 'totalKurirPegawai', 'chartData', 'tamuDatang', 'tamuMenunggu', 'tamuDitolak', 'kurirHari', 'selesai'));
     }
 
     public function loginPage()

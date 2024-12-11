@@ -222,7 +222,7 @@ class UserController extends Controller
         $kedatangan = KedatanganEkspedisi::create([
             'id_ekspedisi' => $ekspedisi->id_ekspedisi,
             'id_pegawai' => $request->id_pegawai,
-            'foto' => $filePath,
+            'foto' => $fileName,
             'tanggal_waktu' => $request->tanggal_waktu,
         ]);
 

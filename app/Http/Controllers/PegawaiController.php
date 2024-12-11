@@ -55,15 +55,22 @@ class PegawaiController extends Controller
 
         $query = Pegawai::with('user');
 
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->has('search_field')) {
             $searchTerm = '%' . $request->search . '%';
-            $query->where(function($q) use ($searchTerm) {
-                $q->whereHas('user', function($userQuery) use ($searchTerm) {
-                    $userQuery->where('nama_user', 'like', $searchTerm);
-                })
-                ->orWhere('nip', 'like', $searchTerm);
+            $searchField = $request->search_field;
+
+            $query->where(function($q) use ($searchField, $searchTerm) {
+                if ($searchField === 'nama_user' || $searchField === 'email') {
+                    $q->whereHas('user', function($userQuery) use ($searchField, $searchTerm) {
+                        $userQuery->where($searchField, 'like', $searchTerm);
+                    });
+                } else {
+                    $q->where($searchField, 'like', $searchTerm);
+                }
             });
         }
+        $pegawais = $query->paginate(10); // or however you want to paginate
+
 
         $data = $query->paginate(10); // Execute the query and retrieve the filtered data
 
@@ -214,6 +221,9 @@ class PegawaiController extends Controller
         //         'file'
         //     ]
         // ]);
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
 
         Excel::import(new PegawaiImport, $request->file('excel_file'));
 

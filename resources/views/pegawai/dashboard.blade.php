@@ -159,6 +159,24 @@
                     </div>
                 </div>
             </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        Daftar tamu yang sudah datang
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionPricing">
+                    <div class="accordion-body">
+                        @if ($selesai->isEmpty())
+                        <p class="text-center text-gray-500">Tidak ada kunjungan selesai hari ini.</p>
+                    @else
+                        @foreach ($selesai as $item)
+                            @include('components.kedatanganTamu', ['item' => $item])
+                        @endforeach
+                    @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

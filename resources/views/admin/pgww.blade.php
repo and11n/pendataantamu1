@@ -63,35 +63,38 @@
                         <option value="inggris" {{ request('body_ptk') == 'inggris' ? 'selected' : '' }}>Inggris</option>
                     </select>
                 </form>
-                <div style="background-color: #F5F7FA;width:60rem">
-                    {{-- <label for="search">
-                        <img height="20" width="20" src="{{ asset('img/magnifying-glass 1.png') }}" alt="search">
-                    </label> --}}
-                    {{-- <form action="{{ route('admin.pegawai') }}" method="GET">
-                        <input type="text" name="search" placeholder="Search"
-                               style="border: none;background-color: #F5F7FA;"
-                               class="form-control rounded-pill" id="search_2">
-                    </form> --}}
+                <div style="background-color: #F5F7FA;width:60rem;">
                     <form action="{{ route('admin.pegawai') }}" method="GET">
                         <div class="input-group">
-                            <input type="text" name="search" class="form-control rounded-pill" style="border: none;background-color: #F5F7FA;" placeholder="Cari pegawai" value="{{ request('search') }}">
-                            {{-- <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="submit">Cari</button>
-                            </div> --}}
+                            <div class="position-relative" style="max-width: 150px;">
+                                <select name="search_field" id="searchField" class="form-control" style="appearance: none; border-radius: 0.75rem; padding-right: 30px;">
+                                    <option value="nama_user">Nama</option>
+                                    <option value="no_telp">No Telp</option>
+                                    <option value="ptk">PTK</option>
+                                    <option value="nip">NIP</option>
+                                    <option value="email">Email</option>
+                                </select>
+                                <!-- Custom arrow icon -->
+                                <span class="position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                                    <i class="fa fa-caret-down"></i> <!-- Ensure Font Awesome is included -->
+                                </span>
+                            </div>
+                            <input type="text" name="search" id="searchInput" class="form-control rounded-pill" style="border: none; background-color: #F5F7FA;" placeholder="Cari Nama" value="{{ request('search') }}">
                         </div>
                     </form>
                 </div>
             </div>
         </div>
         <div class="container">
-            <form action="{{ route('admin_import-excel') }}" method="post" enctype="multipart/form-data"
-                class="d-flex align-items-center">
+            <form action="{{ route('admin_import-excel') }}" method="post" enctype="multipart/form-data" class="d-flex align-items-center">
                 {{ @csrf_field() }}
                 <div class="form-group d-flex align-items-center mb-0">
                     <label for="file" class="mr-2 mb-0">File</label>
                     <input type="file" class="form-control-file mr-2" name="excel_file" id="file">
                 </div>
-                <button type="submit" class="btn btn-primary">Import</button>
+                <button type="submit" class="btn btn-primary mr-2">Import</button>
+                <!-- Link ke file template di public/format -->
+                <a href="{{ asset('format/template_import_pegawai.xlsx') }}" class="btn btn-success">Download Template</a>
             </form>
         </div>
 
@@ -203,4 +206,11 @@
 @endsection
 @section('script')
     <script src="{{ asset('js/pegawai.js') }}"></script>
+    <script>
+        document.getElementById('searchField').addEventListener('change', function() {
+            const searchInput = document.getElementById('searchInput');
+            const selectedOption = this.options[this.selectedIndex].text;
+            searchInput.placeholder = `Cari ${selectedOption}`;
+        });
+    </script>
 @endsection

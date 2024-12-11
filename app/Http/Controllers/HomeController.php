@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Exports\LapAdminExport;
 use App\Exports\KuLapAdminExport;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
@@ -92,10 +93,47 @@ class HomeController extends Controller
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
-        // Ambil data dengan paginasi
-        $kedatanganTamu = $query->paginate(7); // Ganti 7 dengan jumlah item per halaman yang diinginkan
+        // Cek apakah ada filter pencarian
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = '%' . $request->search . '%';
+            $filter = $request->input('filter');
 
-         
+            $query->where(function ($q) use ($searchTerm, $filter) {
+                switch ($filter) {
+                    case 'tamu':
+                        $q->whereHas('tamu', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('nama', 'like', $searchTerm); // Pastikan 'nama' adalah kolom yang benar
+                        });
+                        break;
+                    case 'no_telp':
+                        $q->whereHas('no telp ', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('no_telp', 'like', $searchTerm);
+                        });
+                        break;
+                    case 'alamat':
+                        $q->whereHas('alamat', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('alamat', 'like', $searchTerm);
+                        });
+                        break;
+                    case 'pegawai':
+                        $q->whereHas('pegawai', function ($pegawaiQuery) use ($searchTerm) {
+                            $pegawaiQuery->where('nama_user', 'like', $searchTerm);
+                        });
+                        break;
+                    case 'tanggal_waktu':
+                        $q->whereDate('waktu_perjanjian', '=', date('Y-m-d', strtotime($searchTerm)));
+                        break;
+                    case 'instansi':
+                        $q->whereHas('instansi', function ($instansiQuery) use ($searchTerm) {
+                            $instansiQuery->where('instansi', 'like', $searchTerm);
+                        });
+                        break;
+                }
+            });
+        }
+
+        // Ambil data dengan paginasi
+        $kedatanganTamu = $query->paginate(7);
 
         return view('admin.laporan', compact('kedatanganTamu'));
     }
@@ -216,6 +254,45 @@ class HomeController extends Controller
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
+        // Cek apakah ada filter pencarian
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = '%' . $request->search . '%';
+            $filter = $request->input('filter');
+
+            $query->where(function ($q) use ($searchTerm, $filter) {
+                switch ($filter) {
+                    case 'tamu':
+                        $q->whereHas('tamu', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('nama', 'like', $searchTerm); // Pastikan 'nama' adalah kolom yang benar
+                        });
+                        break;
+                    case 'no_telp':
+                        $q->whereHas('no telp ', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('no_telp', 'like', $searchTerm);
+                        });
+                        break;
+                    case 'alamat':
+                        $q->whereHas('alamat', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('alamat', 'like', $searchTerm);
+                        });
+                        break;
+                    case 'pegawai':
+                        $q->whereHas('pegawai', function ($pegawaiQuery) use ($searchTerm) {
+                            $pegawaiQuery->where('nama_pegawai', 'like', $searchTerm); // Pastikan 'nama_pegawai' ada di tabel pegawai
+                        });
+                        break;
+                    case 'tanggal_waktu':
+                        $q->whereDate('waktu_perjanjian', '=', date('Y-m-d', strtotime($searchTerm))); // Pastikan format pencarian tanggal sesuai
+                        break;
+                    case 'instansi':
+                        $q->whereHas('instansi', function ($instansiQuery) use ($searchTerm) {
+                            $instansiQuery->where('instansi', 'like', $searchTerm);
+                        });
+                        break;
+                }
+            });
+        }
+
         // Ambil data dengan paginasi
         $kedatanganTamu = $query->paginate(7);
         $kedatanganTamu->appends($request->all());
@@ -281,7 +358,7 @@ class HomeController extends Controller
     public function pegawaiKunjungan(Request $request)
     {
         $id_user = Auth::id();
-    
+
         $status = $request->query('status');
         $search = $request->query('search'); // Get the search input
 
@@ -298,7 +375,7 @@ class HomeController extends Controller
                     break;
             }
         }
-    
+
         $listKunjungan = KedatanganTamu::with('pegawai.user', 'tamu') // Include the 'tamu' relationship
             ->when($status, function ($query) use ($status) {
                 $query->where('status', $status);
@@ -311,23 +388,23 @@ class HomeController extends Controller
             ->orderBy('waktu_perjanjian', 'desc')
             ->paginate(5)
             ->appends($request->query());
-    
+
         // Hitung jumlah tamu berdasarkan status "belum datang", "selesai", dan "gagal"
         $tamuBelumDatang = KedatanganTamu::where('status', 'belum datang')->count();
         $tamuSelesai = KedatanganTamu::where('status', 'selesai')->count();
         $tamuGagal = KedatanganTamu::where('status', 'gagal')->count();
-    
+
         // Definisikan variabel diterima, ditolak, dan menunggu
         $diterima = KedatanganTamu::where('status', 'diterima')->count();
         $ditolak = KedatanganTamu::where('status', 'ditolak')->count();
         $menunggu = KedatanganTamu::where('status', 'menunggu')->count();
-    
+
         // Menghitung persentase
         $total = $diterima + $ditolak + $menunggu;
         $diterimaPersen = $total > 0 ? ($diterima / $total) * 100 : 0;
         $ditolakPersen = $total > 0 ? ($ditolak / $total) * 100 : 0;
         $menungguPersen = $total > 0 ? ($menunggu / $total) * 100 : 0;
-    
+
         // Passing data ke view
         return view('pegawai.kunjungan', compact(
             'diterima', 'listKunjungan', 'ditolak', 'menunggu',
@@ -335,30 +412,42 @@ class HomeController extends Controller
             'tamuBelumDatang', 'tamuSelesai', 'tamuGagal'
         ));
     }
-    
+
 
     public function updateStatus(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            'id' => 'required|exists:kedatangan_tamus,id',
-            'status' => 'required|in:diterima,ditolak',
-            'alasan' => 'required_if:status,ditolak',
-        ]);
+        $kunjungan = KedatanganTamu::findOrFail($request->id);
+        $kunjungan->status = $request->status;
+        $kunjungan->save();
 
-        $kedatangan = KedatanganTamu::findOrFail($request->id);
-        $kedatangan->status = $request->status;
-        if ($request->status === 'ditolak') {
-            $kedatangan->alasan = $request->alasan;
-        } else {
-            $kedatangan->alasan = null; // Reset alasan jika status bukan Ditolak
-            $qrcodepath = 'qrcodes/' . $kedatangan->id . '.png';
-            $qrcodedata = base64_decode($kedatangan->qr_code);
-            Storage::disk('public')->put($qrcodepath, $qrcodedata);
-            // $fullqrcode = public_path('storage/' . $qrcodepath);
+        if ($request->status == 'diterima') {
+            $qrCodePath = 'qrcodes/' . $kunjungan->id_kedatangan . '.png';
+            $qrCodeData = base64_decode($kunjungan->qr_code);
+            Storage::disk('public')->put($qrCodePath, $qrCodeData);
+            $fullQrCodePath = public_path('storage/' . $qrCodePath);
+            // Kirim email ketika kunjungan diterima
+            Mail::send('mails.SendEmail', [
+                'subject' => 'Kunjungan Diterima',
+                'body' => 'Kunjungan Anda telah diterima. Berikut adalah QR code untuk keperluan kunjungan Anda.',
+            ], function ($message) use ($kunjungan, $fullQrCodePath) {
+                $message->to($kunjungan->tamu->email)
+                    ->subject('Kunjungan Diterima')
+                    ->attach($fullQrCodePath, [
+                        'as' => 'qrcode.png',
+                        'mime' => 'image/png',
+                    ]);
+            });
+        } elseif ($request->status == 'ditolak') {
+            // Kirim email ketika kunjungan ditolak
+            Mail::send('mails.SendEmail', [
+                'subject' => 'Kunjungan Ditolak',
+                'body' => 'Kunjungan Anda telah ditolak. Alasan: ' . $request->alasan,
+            ], function ($message) use ($kunjungan) {
+                $message->to($kunjungan->tamu->email)
+                    ->subject('Kunjungan Ditolak');
+            });
         }
-        $kedatangan->save();
-
         return redirect()->back()->with('success', 'Status kunjungan berhasil diperbarui.');
     }
 

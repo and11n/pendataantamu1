@@ -19,6 +19,14 @@
                     </select>
 
                     <div style="background-color: #F5F7FA;width:60rem" class="rounded-pill d-flex gap-1 justify-content-center align-items-center p-1 px-3">
+                        <label for="filter">Filter:</label>
+                        <select id="filter" name="filter" class="form-select rounded-pill" onchange="document.getElementById('filterForm').submit()">
+                            <option value="nama_user" {{ request('filter') == 'nama_user' ? 'selected' : '' }}>Nama</option>
+                            <option value="no_telp" {{ request('filter') == 'no_telp' ? 'selected' : '' }}>No Telepon</option>
+                            <option value="nip" {{ request('filter') == 'nip' ? 'selected' : '' }}>NIP</option>
+                            <option value="email" {{ request('filter') == 'email' ? 'selected' : '' }}>Email</option>
+                        </select>
+
                         <label for="search">
                             <img height="20" width="20" src="{{ asset('img/magnifying-glass 1.png') }}" alt="search">
                         </label>

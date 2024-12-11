@@ -9,6 +9,6 @@
     <p>atas nama {{ $nama_kurir }}</p>
     <p>ekspedisi: {{ $ekspedisi }}</p>
     <p>Berikut adalah foto kurir tersebut:</p>
-    <img src="{{ asset($foto) }}" alt="QR Code">
+    <img src="{{ $message->embed(storage_path('app/public/uploads/' . $foto)) }}" alt="Foto Kurir">
 </body>
 </html>

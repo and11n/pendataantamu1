@@ -17,7 +17,7 @@
         <p>Terima Kasih Permintaan Pertemuan {{ $status }}</p>
     @elseif ($status == 'Ditolak')
         <p>Mohon maaf, permintaan pertemuan anda {{ $status }}</p>
-        <p>dengan keterangan {{ $kedatangan->alasan }}</p>
+        <p>dengan keterangan {{ $kunjungan->alasan }}</p>
     @endif
 </body>
 

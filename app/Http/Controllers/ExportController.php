@@ -8,36 +8,37 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\TamuTrait;
-use App\KurirTrait; 
+use App\KurirTrait;
 
 class ExportController extends Controller
 {
+    use TamuTrait;
+
     public function exportPDFTamu(Request $request)
-    {
-        // Initialize query
-        $query = KedatanganTamu::query();
+{
+    // Initialize query and apply date filter
+    $query = KedatanganTamu::query();
+    $query = $this->applyDateFilterTamu($query, $request);
+    $titleHeader = $this->headerDateTamu($request);
 
-        // Apply date filters
-        $query = $this->applyDateFilterTamu($query, $request);
-        $titleHeader = $this->headerDateTamu($request);
-
-        // Group by date and count
-        $data = $query->select(
+    // Group by date and count
+    $data = $query->select(
             DB::raw('DATE(waktu_perjanjian) as tanggal'),
             DB::raw('COUNT(*) as jumlah_kedatangan')
         )
-            ->groupBy('tanggal')
-            ->orderBy('tanggal')
-            ->get();
+        ->groupBy('tanggal')
+        ->orderBy('tanggal')
+        ->get();
 
-        // Generate PDF
-        $pdf = Pdf::loadView('FO.pdf.laporan-tamu', compact('data', 'titleHeader'))
+    // Generate PDF
+    $pdf = Pdf::loadView('frontoffice.laporanTamu', compact('data', 'titleHeader'))
         ->setPaper('a4', 'landscape');
 
-        // Generate filename and return PDF
-        $filename = $this->generateFilteredFilename($request, 'laporan-tamu') . '.pdf';
-        return $pdf->download($filename);
-    }
+    // Generate filename and return PDF
+    $filename = $this->generateFilteredFilename($request, 'laporan-tamu') . '.pdf';
+    return $pdf->stream($filename);
+}
+
     public function exportPDFKurir(Request $request)
     {
         // Initialize query

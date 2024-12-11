@@ -63,7 +63,7 @@
                             <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>Belum Datang</option>
                         </select>
                         <input type="text" name="search" class="form-control mb-3" placeholder="Cari Nama Pengunjung" id="searchInput">
-                    </form>     
+                    </form>
                     @forelse ($listKunjungan as $kedatangan)
                         @if ($kedatangan->status != 'menunggu')
                             @if ($kedatangan->tamu)
@@ -154,7 +154,7 @@
                                         {{ $kedatangan->ekspedisi->ekspedisi }}
                                     @endif
                                 </p>
-                                <form action="{{ route('update.status') }}" method="POST">
+                                <form action="{{ route('pegawai.update.status') }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="id" value="{{ $kedatangan->id }}">
@@ -162,12 +162,12 @@
                                         class="btn btn-warning">Terima</button>
                                 </form>
 
-                                <form action="{{ route('update.status') }}" method="POST">
+                                <form action="{{ route('pegawai.update.status') }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="id" value="{{ $kedatangan->id }}">
-                                    <button type="button" name="status" value="ditolak"
-                                        class="btn btn-danger">Tolak</button>
+                                    <button type="button" name="status" value="ditolak" class="btn btn-danger" onclick="showAlasan()">Tolak</button>
+
                                     <div class="alasanField" style="display: none;">
                                         <input type="hidden" name="status" value="ditolak">
                                         <label for="alasan">Alasan Penolakan:</label>
@@ -175,6 +175,13 @@
                                         <button type="submit" class="btn btn-info">Kirim Alasan</button>
                                     </div>
                                 </form>
+
+                                <script>
+                                    function showAlasan() {
+                                        document.querySelector('.alasanField').style.display = 'block';
+                                    }
+                                </script>
+
 
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#detailModal{{ $kedatangan->id }}">

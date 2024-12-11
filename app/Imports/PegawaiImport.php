@@ -7,31 +7,38 @@ use App\Models\Pegawai;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class PegawaiImport implements ToCollection, WithHeadingRow
+class PegawaiImport implements ToCollection, WithStartRow
 {
     /**
-    * @param Collection $collection
-    */
-    public function collection(Collection $rows)
-{
-    foreach ($rows as $row) {
-        // Membuat user baru dengan metode create
-        // dd($row);
-        $user = User::create([
-            'nama_user' => $row['nama'],
-            'email' => $row['email'],
-            'password' => Hash::make('12345678'),
-        ]);
-
-        // Menggunakan id dari user yang baru saja dibuat
-        Pegawai::create([
-            'nip' => $row['nip'],
-            'id_user' => $user->id, // Mengakses id dari instance user
-            'ptk' => $row['ptk'],
-            'no_telp' => $row['no_telp'],
-        ]);
+     * Start import from row 2 (skip header).
+     */
+    public function startRow(): int
+    {
+        return 2;
     }
-}
+
+    /**
+     * @param Collection $collection
+     */
+    public function collection(Collection $rows)
+    {
+        foreach ($rows as $row) {
+            // Create a new user with data accessed by index
+            $user = User::create([
+                'nama_user' => $row[0],  // Assuming 'nama' is in the first column
+                'email' => $row[1],      // Assuming 'email' is in the second column
+                'password' => Hash::make('12345678'),
+            ]);
+
+            // Create a new Pegawai entry
+            Pegawai::create([
+                'nip' => $row[2],         // Assuming 'nip' is in the third column
+                'id_user' => $user->id,   // Use the ID of the user just created
+                'ptk' => $row[3],         // Assuming 'ptk' is in the fourth column
+                'no_telp' => $row[4],     // Assuming 'no_telp' is in the fifth column
+            ]);
+        }
+    }
 }

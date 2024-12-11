@@ -58,14 +58,11 @@
     <div class="dashboard-container">
         <div class="chart-container">
             <div class="d-flex justify-content-end mb-3">
-                <h5 class="text-center flex-grow-1">Grafik Tamu - Kurir</h5>
+                <h5 class="text-center flex-grow-1">Grafik Tamu - Kurir per Bulan</h5>
                 <form method="GET" action="{{ route('admin.dashboard') }}">
-                    <select class="form-select form-select-sm" name="bulan" aria-label="Pilih Bulan" onchange="this.form.submit()" style="width: 150px;">
-                        <option value="all" {{ request('bulan') == 'all' ? 'selected' : '' }}>Pilih Bulan</option>
-                        @foreach (range(1, 12) as $month)
-                            <option value="{{ $month }}" {{ request('bulan') == $month ? 'selected' : '' }}>
-                                {{ DateTime::createFromFormat('!m', $month)->format('F') }}
-                            </option>
+                    <select class="form-select form-select-sm" name="tahun" aria-label="Pilih Tahun" onchange="this.form.submit()" style="width: 150px;">
+                        @foreach (range(now()->year - 5, now()->year) as $year)
+                            <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
                         @endforeach
                     </select>
                 </form>
@@ -182,6 +179,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Daftar tamu yang sudah datang
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionPricing">
+                        <div class="accordion-body">
+                            @if ($selesai->isEmpty())
+                            <p class="text-center text-gray-500">Tidak ada kunjungan selesai hari ini.</p>
+                        @else
+                            @foreach ($selesai as $item)
+                                @include('components.kedatanganTamu', ['item' => $item])
+                            @endforeach
+                        @endif
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -220,27 +235,25 @@
 
 @section('script')
 <script>
-    // Mengambil data dari variabel PHP ke JavaScript
     const data = @json($chartData);
 
     const ctx = document.getElementById("myChart").getContext('2d');
 
-    // Membuat grafik menggunakan Chart.js
     var myChart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: data.labels, // Label untuk sumbu x (bulan)
+            labels: data.labels, // Nama bulan (Januari, Februari, Maret, dst.)
             datasets: [
                 {
                     label: "Kurir",
-                    data: data.kurir, // Data kurir per bulan
+                    data: data.kurir,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
                 },
                 {
                     label: "Tamu",
-                    data: data.tamu, // Data tamu per bulan
+                    data: data.tamu,
                     backgroundColor: 'rgba(153, 102, 255, 0.2)',
                     borderColor: 'rgba(153, 102, 255, 1)',
                     borderWidth: 1,
@@ -250,10 +263,10 @@
         options: {
             scales: {
                 x: {
-                ticks: {
-                    autoSkip: false, // Ensure all labels (dates) are shown
-                }
-            },
+                    ticks: {
+                        autoSkip: false, // Menampilkan semua label bulan
+                    }
+                },
                 y: {
                     beginAtZero: true,
                 },
@@ -261,4 +274,5 @@
         },
     });
 </script>
+
 @endsection

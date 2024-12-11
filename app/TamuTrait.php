@@ -9,7 +9,7 @@ trait TamuTrait
 {
     /**
      * Apply daily date filter to query
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string $startDate
      * @param string $endDate
@@ -26,7 +26,7 @@ trait TamuTrait
 
     /**
      * Apply monthly date filter to query
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $month
      * @param int $year
@@ -43,7 +43,7 @@ trait TamuTrait
 
     /**
      * Apply yearly date filter to query
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $year
      * @param string $dateField default 'waktu_perjanjian'
@@ -59,7 +59,7 @@ trait TamuTrait
 
     /**
      * Generate filename based on filter type and parameters
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @param string $prefix default 'laporan'
      * @return string
@@ -95,38 +95,25 @@ trait TamuTrait
 
     /**
      * Apply date filter based on filter type
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Illuminate\Http\Request $request
      * @param string $dateField default 'waktu_perjanjian'
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function applyDateFilterTamu($query, Request $request, $dateField = 'waktu_perjanjian')
-    {
-        if (!$request->filled('filterType')) {
-            return $query;
-        }
+    public function applyDateFilterTamu($query, Request $request)
+{
+    // Check if date range is provided in the request
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        // Convert dates to Y-m-d format if necessary
+        $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d');
+        $endDate = Carbon::parse($request->input('end_date'))->format('Y-m-d');
 
-        switch ($request->filterType) {
-            case 'daily':
-                if ($request->filled(['startDate', 'endDate'])) {
-                    $query = $this->applyDailyFilter($query, $request->startDate, $request->endDate, $dateField);
-                }
-                break;
-
-            case 'monthly':
-                if ($request->filled(['month', 'monthYear'])) {
-                    $query = $this->applyMonthlyFilter($query, $request->month, $request->monthYear, $dateField);
-                }
-                break;
-
-            case 'yearly':
-                if ($request->filled('year')) {
-                    $query = $this->applyYearlyFilter($query, $request->year, $dateField);
-                }
-                break;
-        }
-
-        return $query;
+        // Apply date filter
+        $query->whereBetween('waktu_perjanjian', [$startDate, $endDate]);
     }
+
+    return $query;
+}
+
 }

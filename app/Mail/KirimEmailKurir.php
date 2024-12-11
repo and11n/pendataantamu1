@@ -11,20 +11,24 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+
 class KirimEmailKurir extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $kedatangan;
     public $status;
     public $tamu;
     public $qrCodePath;
+    public $ekspedisi;
+    public $fotoPath;
+    public $pegawaiTujuan;
 
-    public function __construct($kedatangan, $tamu)
+    public function __construct($ekspedisi, $fotoPath, $pegawaiTujuan)
     {
-        $this->kedatangan = $kedatangan;
-        $this->status = $kedatangan->status;
-        $this->tamu = $tamu;
-        $this->qrCodePath = 'qrcodes/' . $kedatangan->id_kedatangan . '.png';
+        $this->ekspedisi = $ekspedisi;
+        $this->fotoPath = $fotoPath;
+        $this->pegawaiTujuan = $pegawaiTujuan;
     }
 
     public function envelope(): Envelope
@@ -44,13 +48,11 @@ class KirimEmailKurir extends Mailable
 
     public function build()
     {
-        return $this->view('emails.ekspedisi')
-            ->subject('Pemberitahuan Pengiriman Paket')
-            ->attach(Storage::disk('public')->path($this->filePath), [
-                'as' => 'foto_kurir.png',
-                'mime' => 'image/png',
-            ]);
+        return $this->subject('Kurir Baru Ditambahkan')
+                    ->view('pegawai.email.kurir')
+                    ->attach(storage_path('app/public/' . $this->fotoPath));
     }
+
     /**
      * Create a new message instance.
      */

@@ -27,6 +27,25 @@
                     <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="End Date">
                     <button type="submit" class="btn btn-primary mx-2">Search</button>
                 </div>
+                <div class="input-group gap-3" style="width: 19rem;">
+                    <!-- Dropdown Filter -->
+                    <select id="filter" name="filter" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                        <option value="tamu" {{ request('filter') == 'tamu' ? 'selected' : '' }}>Tamu</option>
+                        <option value="no_telp" {{ request('filter') == 'no_telp' ? 'selected' : '' }}>No Telepon</option>
+                        <option value="alamat" {{ request('filter') == 'alamat' ? 'selected' : '' }}>Alamat</option>
+                        <option value="pegawai" {{ request('filter') == 'pegawai' ? 'selected' : '' }}>Pegawai</option>
+                        <option value="tanggal_waktu" {{ request('filter') == 'tanggal_waktu' ? 'selected' : '' }}>Tanggal & Waktu</option>
+                        <option value="instansi" {{ request('filter') == 'instansi' ? 'selected' : '' }}>Instansi</option>
+                    </select>
+
+                    <!-- Input Pencarian -->
+                    <input type="text" name="search" class="form-control" placeholder="Cari pegawai" value="{{ request('search') }}" oninput="document.getElementById('filterForm').submit()">
+
+                    {{-- Uncomment this if you want a button for submission --}}
+                    {{-- <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                    </div> --}}
+                </div>
             </form>
             <div class="d-flex gap-3">
                 <form method="GET" action="{{ route('frontoffice.laporan') }}" id="filterForm">

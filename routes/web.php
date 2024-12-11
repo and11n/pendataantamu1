@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KedatanganTamuController;
 use App\Http\Controllers\PegawaiController;
@@ -54,11 +55,15 @@ Route::middleware(['auth', 'CheckRole:admin'])->prefix('admin')->group(function 
     Route::delete('/pegawai/hapus/{id}', [PegawaiController::class, 'destroy'])->name('deletePegawaiAdmin');
     Route::post('/pegawai', [PegawaiController::class, 'store'])->name('addPegawaiAdmin');
     Route::post('/pegawai/{id}', [PegawaiController::class, 'edit'])->name('editPegawaiAdmin');
-    Route::get('import-excel', [PegawaiController::class, 'import_excel']);
+    // Route::get('import-excel', [PegawaiController::class, 'import_excel']);
     Route::post('import-excel', [PegawaiController::class, 'import_excel_post'])->name('admin_import-excel');
+    Route::get('/download-template', function () {
+        return response()->download(public_path('format/template_import_pegawai.xlsx'));
+    })->name('download-template');
 
     Route::get('/admin/export/excel', [HomeController::class, 'exportExcelAdmin'])->name('admin.export.excel');
-    Route::get('/admin/export/pdf', [HomeController::class, 'exportPDFAdmin'])->name('admin.export.pdf');
+    Route::get('/admin/export/pdfRekap', [ExportController::class, 'exportPDFTamu'])->name('admin.export.pdf');
+    Route::get('/admin/export/pdf', [HomeController::class, 'exportPDFAdmin'])->name('admin.export.pdflaporan');
     Route::get('/export-excel', [HomeController::class, 'exportExcelAdminKurir'])->name('admin_exportKurir.excel');
     Route::get('/export-pdf', [HomeController::class, 'exportKuPDFAdmin'])->name('admin.exportKurir.pdf');
 
@@ -100,6 +105,7 @@ Route::middleware('CheckRole:fo')->prefix('fo')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/kunjungan', [FrontOfficeController::class, 'FOkunjungan'])->name('frontoffice.kunjungan');
+    Route::patch('/update-status', [HomeController::class, 'updateStatus'])->name('pegawai.update.status');
     Route::get('/laporan', [FrontOfficeController::class, 'FOlaporan'])->name('frontoffice.laporan');
     Route::get('/export-excel', [FrontOfficeController::class, 'exportExcelFO'])->name('fo_export.excel');
     Route::get('/laporan/kurir', [FrontOfficeController::class, 'FOlaporanKurir'])->name('frontoffice.laporanKurir');

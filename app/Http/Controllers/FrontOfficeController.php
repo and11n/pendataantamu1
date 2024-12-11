@@ -60,65 +60,76 @@ class FrontOfficeController extends Controller
             $queryEkspedisi->whereMonth('created_at', $selectedMonth);
         }
 
-        $tamuDatang = KedatanganTamu::where('status','diterima')
+        $tamuDatang = KedatanganTamu::where('status', 'diterima')
             ->whereDate('created_at', Carbon::today())
             ->get();
 
-        $tamuMenunggu = KedatanganTamu::where('status','menunggu')
+        $tamuMenunggu = KedatanganTamu::where('status', 'menunggu')
             ->whereDate('created_at', Carbon::today())
             ->get();
 
-        $tamuDitolak = KedatanganTamu::where('status','ditolak')
+        $tamuDitolak = KedatanganTamu::where('status', 'ditolak')
             ->whereDate('created_at', Carbon::today())
             ->get();
 
         $kurirHari = KedatanganEkspedisi::whereDate('created_at', Carbon::today())->get();
 
-        return view('frontoffice.dashboard', compact('countTamuBulan', 'countKurirBulan', 'countGuru', 'chartData', 'tamuDatang', 'tamuMenunggu', 'tamuDitolak', 'kurirHari'));
+        // Filter berdasarkan hari ini saja
+        $selesai = KedatanganTamu::where('status', 'diterima')
+            ->whereDate('created_at', Carbon::today())
+            ->get()
+            ->filter(function ($item) {
+                return $item->waktu_kedatangan !== null
+                    && $item->waktu_perjanjian !== null
+                    && Carbon::parse($item->waktu_kedatangan)->isToday();
+            });
+
+
+        return view('frontoffice.dashboard', compact('countTamuBulan', 'countKurirBulan', 'countGuru', 'chartData', 'tamuDatang', 'tamuMenunggu', 'tamuDitolak', 'kurirHari', 'selesai'));
     }
 
     public function updateKedatangan(Request $request)
-{
-    try {
-        $kedatanganTamu = KedatanganTamu::where('id', $request->id)
-            ->orderBy('Waktu_perjanjian', 'desc')
-            ->first();
+    {
+        try {
+            $kedatanganTamu = KedatanganTamu::where('id', $request->id)
+                ->orderBy('Waktu_perjanjian', 'desc')
+                ->first();
 
-        if (!$kedatanganTamu) {
-            return response()->json(['success' => false, 'message' => 'Data kedatangan tamu tidak ditemukan']);
-        }
-
-        // Set waktu kedatangan
-        $kedatanganTamu->waktu_kedatangan = now();
-
-        if ($request->photo) {
-            $image = $request->photo;
-            $image = str_replace('data:image/jpeg;base64,', '', $image);
-            $image = str_replace(' ', '+', $image);
-            $imageName = time() . '_' . $request->id . '.jpg';
-
-            // Simpan foto ke storage
-            if (Storage::disk('public')->put('img-tamu/' . $imageName, base64_decode($image))) {
-                $kedatanganTamu->Foto = 'img-tamu/' . $imageName; // Simpan path relatif
-            } else {
-                throw new \Exception('Gagal menyimpan gambar');
+            if (!$kedatanganTamu) {
+                return response()->json(['success' => false, 'message' => 'Data kedatangan tamu tidak ditemukan']);
             }
+
+            // Set waktu kedatangan
+            $kedatanganTamu->waktu_kedatangan = now();
+
+            if ($request->photo) {
+                $image = $request->photo;
+                $image = str_replace('data:image/jpeg;base64,', '', $image);
+                $image = str_replace(' ', '+', $image);
+                $imageName = time() . '_' . $request->id . '.jpg';
+
+                // Simpan foto ke storage
+                if (Storage::disk('public')->put('img-tamu/' . $imageName, base64_decode($image))) {
+                    $kedatanganTamu->Foto = 'img-tamu/' . $imageName; // Simpan path relatif
+                } else {
+                    throw new \Exception('Gagal menyimpan gambar');
+                }
+            }
+
+            $kedatanganTamu->save();
+
+            // Cek dan kirim email
+            if ($kedatanganTamu->pegawai && $kedatanganTamu->pegawai->user) {
+                Mail::to($kedatanganTamu->pegawai->user->email)->send(new NotifTamu($kedatanganTamu));
+            } else {
+                throw new \Exception('User  tidak ditemukan untuk kedatangan tamu ini.');
+            }
+
+            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        $kedatanganTamu->save();
-
-        // Cek dan kirim email
-        if ($kedatanganTamu->pegawai && $kedatanganTamu->pegawai->user) {
-            Mail::to($kedatanganTamu->pegawai->user->email)->send(new NotifTamu($kedatanganTamu));
-        } else {
-            throw new \Exception('User  tidak ditemukan untuk kedatangan tamu ini.');
-        }
-
-        return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui']);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
-}
 
     public function getTamuDetail($id)
     {
@@ -256,9 +267,16 @@ class FrontOfficeController extends Controller
         $menungguPersen = $total > 0 ? ($menunggu / $total) * 100 : 0;
 
         return view('frontoffice.kunjungan', compact(
-            'diterima', 'listKunjungan', 'ditolak', 'menunggu',
-            'diterimaPersen', 'ditolakPersen', 'menungguPersen',
-            'tamuBelumDatang', 'tamuSelesai', 'tamuGagal'
+            'diterima',
+            'listKunjungan',
+            'ditolak',
+            'menunggu',
+            'diterimaPersen',
+            'ditolakPersen',
+            'menungguPersen',
+            'tamuBelumDatang',
+            'tamuSelesai',
+            'tamuGagal'
         ));
     }
 
@@ -281,24 +299,63 @@ class FrontOfficeController extends Controller
         // }
 
         // Handle date filter
-       // Handle status filter
-       if ($request->has('status') && $request->status != 'all') {
-        \Log::info('Request Status:', ['status' => $request->status]); // Debugging
-        switch ($request->status) {
-            case 'waiting':
-                $query->where('status', 'menunggu');
-                break;
-            case 'accepted':
-                $query->where('status', 'diterima');
-                break;
-            case 'rejected':
-                $query->where('status', 'ditolak');
-                break;
-        }
+        // Handle status filter
+        if ($request->has('status') && $request->status != 'all') {
+            \Log::info('Request Status:', ['status' => $request->status]); // Debugging
+            switch ($request->status) {
+                case 'waiting':
+                    $query->where('status', 'menunggu');
+                    break;
+                case 'accepted':
+                    $query->where('status', 'diterima');
+                    break;
+                case 'rejected':
+                    $query->where('status', 'ditolak');
+                    break;
+            }
         }
 
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        // Cek apakah ada filter pencarian
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = '%' . $request->search . '%';
+            $filter = $request->input('filter');
+
+            $query->where(function ($q) use ($searchTerm, $filter) {
+                switch ($filter) {
+                    case 'tamu':
+                        $q->whereHas('tamu', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('nama', 'like', $searchTerm); // Pastikan 'nama' adalah kolom yang benar
+                        });
+                        break;
+                    case 'no_telp':
+                        $q->whereHas('no telp ', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('no_telp', 'like', $searchTerm);
+                        });
+                        break;
+                    case 'alamat':
+                        $q->whereHas('alamat', function ($tamuQuery) use ($searchTerm) {
+                            $tamuQuery->where('alamat', 'like', $searchTerm);
+                        });
+                        break;
+                    case 'pegawai':
+                        $q->whereHas('pegawai', function ($pegawaiQuery) use ($searchTerm) {
+                            $pegawaiQuery->where('nama_pegawai', 'like', $searchTerm); // Pastikan 'nama_pegawai' ada di tabel pegawai
+                        });
+                        break;
+                    case 'tanggal_waktu':
+                        $q->whereDate('waktu_perjanjian', '=', date('Y-m-d', strtotime($searchTerm))); // Pastikan format pencarian tanggal sesuai
+                        break;
+                    case 'instansi':
+                        $q->whereHas('instansi', function ($instansiQuery) use ($searchTerm) {
+                            $instansiQuery->where('instansi', 'like', $searchTerm);
+                        });
+                        break;
+                }
+            });
         }
 
         $kedatanganTamu = $query->get();
@@ -369,11 +426,28 @@ class FrontOfficeController extends Controller
         // Cek apakah ada filter pencarian
         if ($request->has('search') && $request->search != '') {
             $searchTerm = '%' . $request->search . '%';
-            $query->where(function($q) use ($searchTerm) {
-                $q->whereHas('user', function($userQuery) use ($searchTerm) {
-                    $userQuery->where('nama_user', 'like', $searchTerm);
-                })
-                ->orWhere('nip', 'like', $searchTerm);
+            $filter = $request->input('filter');
+
+            $query->where(function ($q) use ($searchTerm, $filter) {
+                if ($filter == 'nama_user') {
+                    $q->whereHas('user', function ($userQuery) use ($searchTerm) {
+                        $userQuery->where('nama_user', 'like', $searchTerm);
+                    });
+                } elseif ($filter == 'no_telp') {
+                    $q->whereHas('user', function ($userQuery) use ($searchTerm) {
+                        $userQuery->where('no_telp', 'like', $searchTerm);
+                    });
+                } elseif ($filter == 'nip') {
+                    $q->where('nip', 'like', $searchTerm);
+                } elseif ($filter == 'email') {
+                    $q->whereHas('user', function ($userQuery) use ($searchTerm) {
+                        $userQuery->where('email', 'like', $searchTerm);
+                    });
+                } elseif ($filter == 'ptk') {
+                    $q->whereHas('user', function ($userQuery) use ($searchTerm) {
+                        $userQuery->where('ptk', 'like', $searchTerm);
+                    });
+                }
             });
         }
 
