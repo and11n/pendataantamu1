@@ -15,7 +15,7 @@
             </div>
             <nav>
                 <a href="{{route('beranda')}}">Beranda</a>
-                <a href="{{route('datGuru')}}">Pegawai</a>
+                <!-- <a href="{{route('datGuru')}}">Pegawai</a> -->
                 <a href="{{route('about')}}">Tentang</a>
                 <div id="loginPopup" class="popup" style="display: none;">
                     <div class="popup-content">

@@ -15,7 +15,7 @@
             </div> --}}
             <div class="nav-links">
                 <a href="{{route('beranda')}}">Beranda</a>
-                <a href="{{route('datGuru')}}">Pegawai</a>
+                <!-- <a href="{{route('datGuru')}}">Pegawai</a> -->
                 <a href="{{route('about')}}">Tentang</a>
             </div>
         </nav>
