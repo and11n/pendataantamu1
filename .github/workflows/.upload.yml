@@ -1,8 +1,8 @@
 name: Upload Laravel 11 to aaPanel
 on:  push:
-    branches:      - PROD # Trigger ketika ada push ke branch 'main'
+    branches:      - prod # Trigger ketika ada push ke branch 'main'
   pull_request:    branches:
-      - PROD
+      - prod
 jobs:  build:
     runs-on: ubuntu-latest
     steps:      # Step 1: Checkout repository
